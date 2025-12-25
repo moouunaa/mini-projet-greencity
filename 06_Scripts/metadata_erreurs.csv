@@ -1,0 +1,5 @@
+Fichier,Description,Erreurs principales
+env_reports_01_2025.csv,Janvier 2025 - Erreurs légères,"Dates mal formatées, quelques valeurs NULL"
+env_reports_02_2025.csv,Février 2025 - Erreurs moyennes,"CO2 négatifs, recyclage > 1, bâtiments manquants"
+env_reports_03_2025.csv,Mars 2025 - Erreurs complexes,"Toutes les erreurs combinées, incohérences"
+env_reports_clean.csv,Référence propre,Aucune
