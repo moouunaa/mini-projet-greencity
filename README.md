@@ -557,3 +557,292 @@ source_filename,extraction_timestamp,date_generation,created_at,updated_at
 **État**:   PRÊT POUR CHARGEMENT DATA MART**
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Phase de Transformation - Impact Environnemental   COMPLÉTÉ
+
+## Fichier: `06_Transform_Environnement.ktr`
+
+### Objectif:
+Consolider, valider et nettoyer les données d'impact environnemental (émissions CO2, taux de recyclage) provenant des sources CSV et MySQL avec gestion avancée de la qualité des données.
+
+### État:   TRANSFORMATION COMPLÈTE AVEC GESTION D'ERREURS
+
+#### Innovation clé: **Pipeline à deux voies**
+- **Voie principale**: Données conformes → Traitement standard
+- **Voie de correction**: Données non conformes → Nettoyage → Réintégration
+- **Voie de rejet**: Données irrécupérables → Log pour audit
+
+---
+
+## Architecture du Pipeline de Qualité:
+
+
+[Fusion sources] → [Nettoyage basique] → [Validation format] → [DIVERGENCE]
+       │                                         │
+       ├─► Données conformes ────────────────────┤
+       │    [Validation numérique] → [Validation plages] → [Normalisation] → [Sortie]
+       │
+       └─► Données non conformes ────────────────┘
+            [Correction] → [Réintégration] ──────┘
+
+
+---
+
+## Processus Détailé:
+
+### Étape 1: Unification des Sources
+#### Flux CSV (53 enregistrements):
+
+Original (8 champs) → Ajout created_at/updated_at → Traduction → Réorganisation
+id_region → region_code
+id_batiment → building_code
+date_rapport → report_date
+emission_CO2_kg → emission_co2_kg
+taux_recyclage → recycling_rate
+
+
+#### Flux MySQL:
+
+Original (10 champs) → Suppression report_id → Ajout updated_at → Réorganisation
+→ Alignement parfait (10 champs identiques)
+
+
+### Étape 2: Nettoyage Initial
+- **Trim**: Tous les champs texte nettoyés
+- **Standardisation**: Nomenclature uniforme
+
+### Étape 3: **Validation des Formats (Filter rows 3)**
+#### Vérification par expressions régulières:
+- `region_code`: Doit correspondre à `REG[0-9]{2}` (ex: REG01, REG99)
+- `building_code`: Doit correspondre à `BAT[0-9]{3}` (ex: BAT001, BAT999)
+
+#### Résultats:
+- **Conforme**: Poursuit dans la voie principale
+- **Non conforme**: Redirigé vers voie de correction
+
+### Étape 4: **Correction des Données Non Conformes (Voie de correction)**
+#### Modified JavaScript value 2:
+```javascript
+Traitement intelligent:
+- region_code invalide → "NON_RENSEIGNE"
+- building_code invalide → "NON_RENSEIGNE"
+- Création de champs nettoyés: region_clean, building_clean
+```
+
+#### Calculator_Unifier:
+- Utilisation de `NVL()` pour prioriser les valeurs originales
+- Fallback sur les valeurs corrigées si original NULL/invalide
+
+#### Réintégration:
+- Données corrigées rejoignent le flux principal via "Append streams 2"
+- **Philosophie**: Mieux vaut une valeur corrigée qu'une suppression
+
+### Étape 5: **Validation Numérique (Filter rows)**
+#### Vérification des types:
+- `emission_co2_kg`: Doit être numérique (regex validation)
+- `recycling_rate`: Doit être numérique (regex validation)
+
+#### Résultats:
+- **Numérique**: Poursuit le traitement
+- **Non numérique**: Rejeté vers "Dummy" (audit)
+
+### Étape 6: **Validation des Plages (Filter rows 2)**
+#### Contrôles métier:
+- `emission_co2_kg`: Entre 0 et 10000 kg (plage réaliste)
+- `recycling_rate`: Entre 0 et 1 (0% à 100%)
+
+#### Rationale:
+- CO2 négatif impossible
+- Taux recyclage > 100% impossible
+- Valeurs extrêmes probablement erronées
+
+### Étape 7: **Normalisation Avancée**
+#### Select values 3:
+- Typage précis: `BigNumber(7,2)` pour CO2 (ex: 512.50)
+- Typage précis: `BigNumber(5,3)` pour taux (ex: 0.715)
+
+#### Modified JavaScript value:
+```javascript
+Normalisation des dates report_date:
+- "2025/03/31" → "2025-03-31"
+- "31/03/2025" → "2025-03-31"  
+- "2025-03-31" → inchangé
+```
+
+#### Select values 6:
+- Formatage standard des timestamps: `yyyy/MM/dd HH:mm:ss.SSS`
+- Cohérence temporelle pour analyse
+
+### Étape 8: **Sortie Finale**
+- **Fichier**: `transformed_environnement.csv`
+- **Encodage**: UTF8
+- **Format**: CSV standard avec en-têtes
+- **Champs**: 10 champs normalisés
+
+---
+
+## Problèmes de Qualité Traités:
+
+### 1.   Formats de Codes Invalides
+**Exemples traités**:
+- `"  REG99  "` → Trim → Validation échoue → `"NON_RENSEIGNE"`
+- `"BAT999"` → Validation réussie (BAT[0-9]{3})
+- Codes malformés → Correction plutôt que suppression
+
+### 2.   Valeurs Non Numériques
+**Gestion intelligente**:
+- `"N/A"` dans `emission_co2_kg` → Rejeté (audit nécessaire)
+- `"Non mesuré"` dans `recycling_rate` → Rejeté (audit nécessaire)
+- **Philosophie**: Mieux vaut rejeter que convertir arbitrairement
+
+### 3.   Plages Invalides
+**Contrôles métier**:
+- `99999` (CO2) → Rejeté (hors plage 0-10000)
+- `1.5` (recyclage) → Rejeté (> 100%)
+- Valeurs manifestement erronées isolées
+
+### 4.   Formats de Date Incohérents
+**Normalisation**:
+- Trois formats supportés → Un format standard
+- Garantie de cohérence pour l'analyse temporelle
+
+### 5.   Données Manquantes
+**Stratégie**:
+- NULLs préservés 
+- `"NON_RENSEIGNE"` pour codes invalides
+- Distinction claire: NULL (original) vs "NON_RENSEIGNE" (corrigé)
+
+---
+
+## Métriques de Qualité:
+
+| Étape Validation | Critère | Action | Résultat |
+|------------------|---------|--------|----------|
+| Format codes | REGXX, BATXXX | Correction/Réintégration |   Données récupérées |
+| Type numérique | CO2, taux | Rejet si non numérique |   Pureté numérique |
+| Plages métier | CO2: 0-10000, Taux: 0-1 | Rejet si hors plage |   Données réalistes |
+| Cohérence | 3 formats date → 1 | Normalisation |   Analyse temporelle |
+
+---
+
+## Fichier de Sortie: `transformed_environnement.csv`
+
+### Structure (10 champs):
+```csv
+region_code,report_date,building_code,emission_co2_kg,recycling_rate,
+extraction_timestamp,source_filename,source_type,created_at,updated_at
+```
+
+### Caractéristiques:
+- **Typage**: Numéros précis (décimales contrôlées)
+- **Dates**: Format `yyyy-MM-dd` standard
+- **Qualité**: Validée sur 4 niveaux (format, type, plage, cohérence)
+
+### Données Incluses:
+-   Rapports CSV originaux (nettoyés)
+-   Rapports MySQL (déjà propres)
+-   Données corrigées ("NON_RENSEIGNE")
+-   Données irrécupérables (rejetées avec audit)
+
+---
+
+## Innovations du Pipeline:
+
+### 1. **Correction vs Suppression**
+- Traditionnel: Supprimer les données invalides
+- Notre approche: **Corriger quand possible**, supprimer quand nécessaire
+- Exemple: `"  REG  "` → Trim → Invalide → `"NON_RENSEIGNE"` (meilleur que NULL)
+
+### 2. **Validation Multi-niveaux**
+- Niveau 1: Format (regex)
+- Niveau 2: Type (numérique)
+- Niveau 3: Plage (réaliste)
+- Niveau 4: Cohérence (dates)
+
+### 3. **Traçabilité Complète**
+- Source originale préservée (`source_filename`, `source_type`)
+- Horodatages standardisés
+- Distinction NULL original vs valeur corrigée
+
+
+---
+
+## Leçons Apprises:
+
+
+
+### 2. **Validation Progressive**
+- Mieux vaut 4 validations simples qu'1 validation complexe
+- Chaque niveau élimine un type de problème différent
+
+### 3. **Correction Intelligente**
+- `"NON_RENSEIGNE"` > NULL pour l'analyse
+- Permet de quantifier "X% des régions non renseignées"
+- Mieux que "X% des données supprimées"
+
+
+
+---
+
+## Préparation pour Phase Suivante:
+
+### Données prêtes pour:
+1. **Chargement Data Mart Environnement**
+2. **Calcul KPI**: Émissions totales, tendances CO2
+3. **Analyse écarts**: Régions/bâtiments "NON_RENSEIGNE"
+4. **Tableau de bord**: Impact environnemental visualisable
+
+### Intégration avec:
+- **Consommation**:   Complété (énergie utilisée)
+- **Rentabilité**:  À venir (coûts environnementaux)
+- **Environnement**:   Complété (impact écologique)
+
+---
+
+**État**:   PRÊT POUR CHARGEMENT DATA MART ENVIRONNEMENT**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
