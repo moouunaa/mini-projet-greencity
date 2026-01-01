@@ -1,0 +1,57 @@
+id_region,id_batiment,type_energie,unite,date_generation,compteur_id,date_mesure,consommation_value,source_filename,extraction_timestamp,source_type
+REG01,,,,,,,,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,,,,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_001,2025-01-14T08:00:00,120.5,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_001,2025-01-14T09:00:00,123.2,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_001,2025-01-14T10:00:00,118.7,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_001,2025-01-14T11:00:00,107.3,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_002,2025-01-14T08:00:00,98.1,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_002,2025-01-14T09:00:00,101.7,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_002,14/01/2025 10:00,96.5,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-01-14,ELEC_002,2025-01-14T11:00:00,95.8,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,,,,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,ELEC_003,2025-01-14T08:00:00,115.2,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,ELEC_003,2025-01-14T09:00:00,124.7,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,ELEC_004,2025-01-14T08:00:00,45.5,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,ELEC_004,2025-01-14T09:00:00,50.1,Elec_consumption_01_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-01-14,,,,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-02-15,,,,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-02-15,ELEC_001,2025-02-15T08:00:00,125.3,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-02-15,ELEC_001,2025-02-15T09:00:00,130.1,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-02-15,ELEC_001,15/02/2025 10:00,122.5,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT001,electricite,KWh,2025-02-15,ELEC_002,2025-02-15T08:00:00,102.8,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-02-15,,,,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-02-15,ELEC_003,2025-02-15T08:00:00,118.9,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,BAT002,electricite,KWh,2025-02-15,ELEC_003,2025-02-15T09:00:00,,Elec_consumption_02_2025.json                                                                       ,2025/12/31 23:46:07.000,json
+REG01,,,,,,,,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,,,,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,EAU_001,2025-01-14T08:00:00,1.5,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,EAU_001,2025-01-14T09:00:00,1.67,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,EAU_001,2025-01-14T10:00:00,1.72,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,EAU_002,2025-01-14T08:00:00,2.15,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-01-14,EAU_002,14/01/2025 09:00,2.23,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT003,eau,m3,2025-01-14,,,,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT003,eau,m3,2025-01-14,EAU_003,2025-01-14T08:00:00,3.1,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT003,eau,m3,2025-01-14,EAU_003,2025-01-14T09:00:00,,Eau_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT003,eau,m3,2025-01-14,,,,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,,,,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,EAU_001,2025-02-15T08:00:00,1.6,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,EAU_001,2025-02-15T09:00:00,1.71,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,EAU_002,2025-02-15T08:00:00,2.2,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,EAU_002,15/02/2025 09:00,2.3,Eau_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT001,eau,m3,2025-02-15,,,,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,,,,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,GAZ_001,2025-01-14T08:00:00,3.5,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,GAZ_001,2025-01-14T09:00:00,3.67,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,GAZ_001,2025-01-14T10:00:00,3.8,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,GAZ_002,2025-01-14T08:00:00,4.35,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-01-14,GAZ_002,14/01/2025 09:00,5.03,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT006,gaz,m3,2025-01-14,,,,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT006,gaz,m3,2025-01-14,GAZ_003,2025-01-14T08:00:00,6.2,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT006,gaz,m3,2025-01-14,GAZ_003,2025-01-14T09:00:00,,Gaz_consumption_01_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT006,gaz,m3,2025-01-14,,,,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-02-15,,,,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-02-15,GAZ_001,2025-02-15T08:00:00,3.6,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-02-15,GAZ_001,2025-02-15T09:00:00,3.72,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-02-15,GAZ_002,2025-02-15T08:00:00,4.4,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json
+REG01,BAT002,gaz,m3,2025-02-15,GAZ_002,15/02/2025 09:00,5.1,Gaz_consumption_02_2025.json                                                                        ,2025/12/31 23:46:07.000,json

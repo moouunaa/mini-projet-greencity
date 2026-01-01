@@ -1,0 +1,56 @@
+{
+  "id_region": "REG01",
+  "batiments": [
+    {
+      "id_batiment": "BAT002",
+      "type_energie": "gaz",
+      "unite": "m3",
+      "date_generation": "2025-01-14",
+      "mesures": [
+        {
+          "compteur_id": "GAZ_001",
+          "date_mesure": "2025-01-14T08:00:00",
+          "consommation_m3": 3.5
+        },
+        {
+          "compteur_id": "GAZ_001",
+          "date_mesure": "2025-01-14T09:00:00",
+          "consommation_m3": 3.67
+        },
+        {
+          "compteur_id": "GAZ_001",
+          "date_mesure": "2025-01-14T10:00:00",
+          "consommation_m3": 3.8
+        },
+        {
+          "compteur_id": "GAZ_002",
+          "date_mesure": "2025-01-14T08:00:00",
+          "consommation_m3": 4.35
+        },
+        {
+          "compteur_id": "GAZ_002",
+          "date_mesure": "14/01/2025 09:00",
+          "consommation_m3": 5.03
+        }
+      ]
+    },
+    {
+      "id_batiment": "BAT006",
+      "type_energie": "gaz",
+      "unite": "m3",
+      "date_generation": "2025-01-14",
+      "mesures": [
+        {
+          "compteur_id": "GAZ_003",
+          "date_mesure": "2025-01-14T08:00:00",
+          "consommation_m3": 6.2
+        },
+        {
+          "compteur_id": "GAZ_003",
+          "date_mesure": "2025-01-14T09:00:00",
+          "consommation_m3": null
+        }
+      ]
+    }
+  ]
+}
