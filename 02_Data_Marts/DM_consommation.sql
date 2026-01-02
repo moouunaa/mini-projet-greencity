@@ -8,8 +8,7 @@ CREATE TABLE DIM_TEMPS (
     trimestre INT,
     semaine_annee INT,
     jour_semaine VARCHAR(20),
-    est_weekend BOOLEAN,
-    est_ferie BOOLEAN,
+    est_weekend VARCHAR(1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
