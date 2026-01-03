@@ -493,8 +493,8 @@
     </hop>
   </order>
   <step>
-    <name>String operations</name>
-    <type>StringOperations</type>
+    <name>Append streams 2</name>
+    <type>Append</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -503,151 +503,8 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>invoice_number</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>status</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>client_code</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>client_name</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>sector</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>building_code</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>building_name</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>region_code</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>payment_method</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>source_type</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>source_filename</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>none</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-    </fields>
+    <head_name>Filter rows 3</head_name>
+    <tail_name>Select values 3</tail_name>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -657,8 +514,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>32</yloc>
+      <xloc>560</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -686,7 +543,7 @@
     <parallel>N</parallel>
     <newline_possible>N</newline_possible>
     <format>mixed</format>
-    <encoding/>
+    <encoding>UTF-8</encoding>
     <fields>
       <field>
         <name>invoice_id</name>
@@ -957,33 +814,6 @@
     </GUI>
   </step>
   <step>
-    <name>Append streams 2</name>
-    <type>Append</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <head_name>Filter rows 3</head_name>
-    <tail_name>Select values 3</tail_name>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>560</xloc>
-      <yloc>128</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Calculator_Unifier</name>
     <type>Calculator</type>
     <description/>
@@ -1136,6 +966,80 @@
     </GUI>
   </step>
   <step>
+    <name>Modified JavaScript value</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>// Function to normalize dates to yyyy-MM-dd format
+function normalizeDate(dateStr) {
+    if (dateStr == null || dateStr.toString().trim() === "") {
+        return null;
+    }
+    
+    var str = dateStr.toString().trim();
+    
+    // Remove time part if present
+    if (str.indexOf(' ') > -1) {
+        str = str.substring(0, str.indexOf(' '));
+    }
+    
+    // Already yyyy-MM-dd
+    if (str.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return str;
+    }
+    
+    // yyyy/MM/dd
+    if (str.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
+        return str.replace(/\//g, '-');
+    }
+    
+    // dd/MM/yyyy
+    if (str.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        var parts = str.split('/');
+        return parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
+    
+    return str; // Return as-is if pattern doesn't match
+}
+
+// Apply to all date fields
+invoice_date = normalizeDate(invoice_date);
+due_date = normalizeDate(due_date);
+payment_date = normalizeDate(payment_date);
+created_at = normalizeDate(created_at);
+updated_at = normalizeDate(updated_at);
+extraction_timestamp = normalizeDate(extraction_timestamp);
+</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>288</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Modified JavaScript value 2</name>
     <type>ScriptValueMod</type>
     <description/>
@@ -1265,126 +1169,6 @@ if (client_code == null || !client_code.match(/^^CLI[0-9]{3}$)) {
     </GUI>
   </step>
   <step>
-    <name>Select values 3</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>invoice_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>invoice_number</name>
-        <rename/>
-      </field>
-      <field>
-        <name>invoice_date</name>
-        <rename/>
-      </field>
-      <field>
-        <name>due_date</name>
-        <rename/>
-      </field>
-      <field>
-        <name>total_ht</name>
-        <rename/>
-      </field>
-      <field>
-        <name>tva_amount</name>
-        <rename/>
-      </field>
-      <field>
-        <name>total_ttc</name>
-        <rename/>
-      </field>
-      <field>
-        <name>energy_cost</name>
-        <rename/>
-      </field>
-      <field>
-        <name>status</name>
-        <rename/>
-      </field>
-      <field>
-        <name>client_code1</name>
-        <rename>client_code</rename>
-      </field>
-      <field>
-        <name>client_name</name>
-        <rename/>
-      </field>
-      <field>
-        <name>sector</name>
-        <rename/>
-      </field>
-      <field>
-        <name>building_code1</name>
-        <rename>building_code</rename>
-      </field>
-      <field>
-        <name>building_name</name>
-        <rename/>
-      </field>
-      <field>
-        <name>region_code1</name>
-        <rename>region_code</rename>
-      </field>
-      <field>
-        <name>payment_date</name>
-        <rename/>
-      </field>
-      <field>
-        <name>payment_amount</name>
-        <rename/>
-      </field>
-      <field>
-        <name>payment_method</name>
-        <rename/>
-      </field>
-      <field>
-        <name>created_at</name>
-        <rename/>
-      </field>
-      <field>
-        <name>updated_at</name>
-        <rename/>
-      </field>
-      <field>
-        <name>extraction_timestamp</name>
-        <rename/>
-      </field>
-      <field>
-        <name>source_type</name>
-        <rename/>
-      </field>
-      <field>
-        <name>source_filename</name>
-        <rename/>
-      </field>
-      <select_unspecified>N</select_unspecified>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>688</xloc>
-      <yloc>128</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Select values 2</name>
     <type>SelectValues</type>
     <description/>
@@ -1398,95 +1182,72 @@ if (client_code == null || !client_code.match(/^^CLI[0-9]{3}$)) {
     <fields>
       <field>
         <name>invoice_id</name>
-        <rename/>
       </field>
       <field>
         <name>invoice_number</name>
-        <rename/>
       </field>
       <field>
         <name>invoice_date</name>
-        <rename/>
       </field>
       <field>
         <name>due_date</name>
-        <rename/>
       </field>
       <field>
         <name>total_ht</name>
-        <rename/>
       </field>
       <field>
         <name>tva_amount</name>
-        <rename/>
       </field>
       <field>
         <name>total_ttc</name>
-        <rename/>
       </field>
       <field>
         <name>energy_cost</name>
-        <rename/>
       </field>
       <field>
         <name>status</name>
-        <rename/>
       </field>
       <field>
         <name>client_code</name>
-        <rename/>
       </field>
       <field>
         <name>client_name</name>
-        <rename/>
       </field>
       <field>
         <name>sector</name>
-        <rename/>
       </field>
       <field>
         <name>building_code</name>
-        <rename/>
       </field>
       <field>
         <name>building_name</name>
-        <rename/>
       </field>
       <field>
         <name>region_code</name>
-        <rename/>
       </field>
       <field>
         <name>payment_date</name>
-        <rename/>
       </field>
       <field>
         <name>payment_amount</name>
-        <rename/>
       </field>
       <field>
         <name>payment_method</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1505,8 +1266,8 @@ if (client_code == null || !client_code.match(/^^CLI[0-9]{3}$)) {
     </GUI>
   </step>
   <step>
-    <name>Modified JavaScript value</name>
-    <type>ScriptValueMod</type>
+    <name>Select values 3</name>
+    <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1515,55 +1276,81 @@ if (client_code == null || !client_code.match(/^^CLI[0-9]{3}$)) {
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <compatible>N</compatible>
-    <optimizationLevel>9</optimizationLevel>
-    <jsScripts>
-      <jsScript>
-        <jsScript_type>0</jsScript_type>
-        <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>// Function to normalize dates to yyyy-MM-dd format
-function normalizeDate(dateStr) {
-    if (dateStr == null || dateStr.toString().trim() === "") {
-        return null;
-    }
-    
-    var str = dateStr.toString().trim();
-    
-    // Remove time part if present
-    if (str.indexOf(' ') > -1) {
-        str = str.substring(0, str.indexOf(' '));
-    }
-    
-    // Already yyyy-MM-dd
-    if (str.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return str;
-    }
-    
-    // yyyy/MM/dd
-    if (str.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
-        return str.replace(/\//g, '-');
-    }
-    
-    // dd/MM/yyyy
-    if (str.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-        var parts = str.split('/');
-        return parts[2] + '-' + parts[1] + '-' + parts[0];
-    }
-    
-    return str; // Return as-is if pattern doesn't match
-}
-
-// Apply to all date fields
-invoice_date = normalizeDate(invoice_date);
-due_date = normalizeDate(due_date);
-payment_date = normalizeDate(payment_date);
-created_at = normalizeDate(created_at);
-updated_at = normalizeDate(updated_at);
-extraction_timestamp = normalizeDate(extraction_timestamp);
-</jsScript_script>
-      </jsScript>
-    </jsScripts>
-    <fields>    </fields>
+    <fields>
+      <field>
+        <name>invoice_id</name>
+      </field>
+      <field>
+        <name>invoice_number</name>
+      </field>
+      <field>
+        <name>invoice_date</name>
+      </field>
+      <field>
+        <name>due_date</name>
+      </field>
+      <field>
+        <name>total_ht</name>
+      </field>
+      <field>
+        <name>tva_amount</name>
+      </field>
+      <field>
+        <name>total_ttc</name>
+      </field>
+      <field>
+        <name>energy_cost</name>
+      </field>
+      <field>
+        <name>status</name>
+      </field>
+      <field>
+        <name>client_code1</name>
+        <rename>client_code</rename>
+      </field>
+      <field>
+        <name>client_name</name>
+      </field>
+      <field>
+        <name>sector</name>
+      </field>
+      <field>
+        <name>building_code1</name>
+        <rename>building_code</rename>
+      </field>
+      <field>
+        <name>building_name</name>
+      </field>
+      <field>
+        <name>region_code1</name>
+        <rename>region_code</rename>
+      </field>
+      <field>
+        <name>payment_date</name>
+      </field>
+      <field>
+        <name>payment_amount</name>
+      </field>
+      <field>
+        <name>payment_method</name>
+      </field>
+      <field>
+        <name>created_at</name>
+      </field>
+      <field>
+        <name>updated_at</name>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+      </field>
+      <field>
+        <name>source_type</name>
+      </field>
+      <field>
+        <name>source_filename</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1573,7 +1360,177 @@ extraction_timestamp = normalizeDate(extraction_timestamp);
       </output>
     </remotesteps>
     <GUI>
-      <xloc>288</xloc>
+      <xloc>688</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>String operations</name>
+    <type>StringOperations</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>invoice_number</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>status</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>client_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>client_name</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>sector</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>building_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>building_name</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>region_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>payment_method</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>source_type</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>source_filename</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>none</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>432</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>

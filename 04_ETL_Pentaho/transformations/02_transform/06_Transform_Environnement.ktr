@@ -492,18 +492,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Calculator_Unifier</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values</from>
       <to>Select values 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Modified JavaScript value 2</from>
-      <to>Calculator_Unifier</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -549,6 +539,11 @@
     <hop>
       <from>Append streams 2</from>
       <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified JavaScript value 2</from>
+      <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -720,7 +715,7 @@
     <parallel>N</parallel>
     <newline_possible>N</newline_possible>
     <format>mixed</format>
-    <encoding/>
+    <encoding>UTF-8</encoding>
     <fields>
       <field>
         <name>id_region</name>
@@ -849,7 +844,7 @@
     <parallel>N</parallel>
     <newline_possible>N</newline_possible>
     <format>mixed</format>
-    <encoding/>
+    <encoding>UTF-8</encoding>
     <fields>
       <field>
         <name>report_id</name>
@@ -973,62 +968,6 @@
     <GUI>
       <xloc>32</xloc>
       <yloc>112</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Calculator_Unifier</name>
-    <type>Calculator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <failIfNoFile>Y</failIfNoFile>
-    <calculation>
-      <field_name>region_code1</field_name>
-      <calc_type>NVL</calc_type>
-      <field_a>region_code</field_a>
-      <field_b>region_clean</field_b>
-      <field_c/>
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask/>
-      <decimal_symbol/>
-      <grouping_symbol/>
-      <currency_symbol/>
-    </calculation>
-    <calculation>
-      <field_name>building_code1</field_name>
-      <calc_type>NVL</calc_type>
-      <field_a>building_code</field_a>
-      <field_b>building_clean</field_b>
-      <field_c/>
-      <value_type>String</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask/>
-      <decimal_symbol/>
-      <grouping_symbol/>
-      <currency_symbol/>
-    </calculation>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1008</xloc>
-      <yloc>176</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1244,7 +1183,7 @@
             <value>
               <name>constant</name>
               <type>String</type>
-              <text>^REG[0-9]{2}$</text>
+              <text>^REG(0[1-9]|1[0-2])$</text>
               <length>-1</length>
               <precision>-1</precision>
               <isnull>N</isnull>
@@ -1356,14 +1295,14 @@ var region_clean;
 var building_clean;
 
 // Pour region_code
-if (region_code == null || !region_code.match(/^REG[0-9]{2}$/)) {
+if (region_code == null || !region_code.match(/^REG[0-9]{2}$/) || parseInt(region_code.substring(3)) > 12 || parseInt(region_code.substring(3)) == 0) {
     region_clean = "NON_RENSEIGNE";
 } else {
     region_clean = region_code;
 }
 
-// Pour building_code
-if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/)) {
+// Pour building_code  
+if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(building_code.substring(3)) > 500) {
     building_clean = "NON_RENSEIGNE";
 } else {
     building_clean = building_code;
@@ -1421,12 +1360,6 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/)) {
       <remove>
         <name>building_code</name>
       </remove>
-      <remove>
-        <name>region_clean</name>
-      </remove>
-      <remove>
-        <name>building_clean</name>
-      </remove>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1438,7 +1371,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/)) {
     </remotesteps>
     <GUI>
       <xloc>1008</xloc>
-      <yloc>272</yloc>
+      <yloc>176</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1455,36 +1388,44 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/)) {
     </partitioning>
     <fields>
       <field>
-        <name>region_code1</name>
+        <name>region_clean</name>
         <rename>region_code</rename>
       </field>
       <field>
         <name>report_date</name>
+        <rename/>
       </field>
       <field>
-        <name>building_code1</name>
+        <name>building_clean</name>
         <rename>building_code</rename>
       </field>
       <field>
         <name>emission_co2_kg</name>
+        <rename/>
       </field>
       <field>
         <name>recycling_rate</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
