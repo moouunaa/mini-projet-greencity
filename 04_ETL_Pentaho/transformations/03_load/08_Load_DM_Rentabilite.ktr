@@ -435,8 +435,700 @@
   </info>
   <notepads>
   </notepads>
+  <connection>
+    <name>greencity_dw</name>
+    <server>localhost</server>
+    <type>MYSQL</type>
+    <access>Native</access>
+    <database>greencity_dw</database>
+    <port>3306</port>
+    <username>root</username>
+    <password>Encrypted 2be98afc86aa7f2e4cb79ce10cc9da0ce</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>3306</attribute>
+      </attribute>
+    </attributes>
+  </connection>
   <order>
+    <hop>
+      <from>Database lookup - DIM_TEMPS</from>
+      <to>Database lookup - DIM_REGION</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_REGION</from>
+      <to>Database lookup - DIM_BATIMENT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_BATIMENT</from>
+      <to> Database lookup - DIM_CLIENT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from> Database lookup - DIM_CLIENT</from>
+      <to>Database lookup - DIM_FACTURE</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_FACTURE</from>
+      <to>Database lookup - DIM_PAIEMENT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_PAIEMENT</from>
+      <to>Calculator</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Upsert_FAIT_RENTABILITE</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>CSV file input</from>
+      <to>Select values 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Database lookup - DIM_TEMPS</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
+  <step>
+    <name>Database lookup - DIM_TEMPS</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_temps</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>invoice_date</name>
+        <field>date_complete</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>144</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_REGION</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_region</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>region_code</name>
+        <field>code_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>240</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_BATIMENT</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_batiment</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>building_code</name>
+        <field>code_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name> Database lookup - DIM_CLIENT</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_client</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>client_code</name>
+        <field>code_client</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_client</name>
+        <rename>id_client</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_FACTURE</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_facture</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>invoice_number</name>
+        <field>numero_facture</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_facture</name>
+        <rename>id_facture</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_PAIEMENT</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_paiement</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>payment_method</name>
+        <field>methode_paiement</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_paiement</name>
+        <rename>id_paiement</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>688</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>marge</field_name>
+      <calc_type>SUBTRACT</calc_type>
+      <field_a>total_ttc</field_a>
+      <field_b>energy_cost</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <calculation>
+      <field_name>taux_marge</field_name>
+      <calc_type>PERCENT_1</calc_type>
+      <field_a>marge</field_a>
+      <field_b>total_ttc</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <calculation>
+      <field_name>delai_paiement</field_name>
+      <calc_type>DATE_DIFF</calc_type>
+      <field_a>payment_date</field_a>
+      <field_b>due_date</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <calculation>
+      <field_name>taux_recouvrement </field_name>
+      <calc_type>PERCENT_1</calc_type>
+      <field_a>payment_amount</field_a>
+      <field_b>total_ttc</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>816</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Upsert_FAIT_RENTABILITE</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>fait_rentabilite</table>
+      <key>
+        <name>id_temps</name>
+        <field>id_temps</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_batiment</name>
+        <field>id_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_region</name>
+        <field>id_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_client</name>
+        <field>id_client</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_facture</name>
+        <field>id_facture</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_paiement</name>
+        <field>id_paiement</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_client</name>
+        <rename>id_client</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_facture</name>
+        <rename>id_facture</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_paiement</name>
+        <rename>id_paiement</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>montant_ht</name>
+        <rename>total_ht</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>montant_tva</name>
+        <rename>tva_amount</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>montant_ttc</name>
+        <rename>total_ttc</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>cout_energie</name>
+        <rename>energy_cost</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>montant_paye</name>
+        <rename>payment_amount</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>marge</name>
+        <rename>marge</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>taux_marge</name>
+        <rename>taux_marge</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>delai_paiement</name>
+        <rename>delai_paiement</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>taux_recouvrement</name>
+        <rename>taux_recouvrement </rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>source_id</name>
+        <rename>source_filename</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>date_extraction</name>
+        <rename>extraction_timestamp</rename>
+        <update>N</update>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>528</xloc>
+      <yloc>304</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_temps</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_region</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_client</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_facture</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_paiement</name>
+        <rename/>
+      </field>
+      <field>
+        <name>total_ht</name>
+        <rename/>
+      </field>
+      <field>
+        <name>tva_amount</name>
+        <rename/>
+      </field>
+      <field>
+        <name>total_ttc</name>
+        <rename/>
+      </field>
+      <field>
+        <name>energy_cost</name>
+        <rename/>
+      </field>
+      <field>
+        <name>payment_amount</name>
+        <rename/>
+      </field>
+      <field>
+        <name>marge</name>
+        <rename/>
+      </field>
+      <field>
+        <name>taux_marge</name>
+        <rename/>
+      </field>
+      <field>
+        <name>delai_paiement</name>
+        <rename/>
+      </field>
+      <field>
+        <name>taux_recouvrement </name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>816</xloc>
+      <yloc>304</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>CSV file input</name>
     <type>CsvInput</type>
@@ -461,7 +1153,7 @@
     <parallel>N</parallel>
     <newline_possible>N</newline_possible>
     <format>mixed</format>
-    <encoding/>
+    <encoding>UTF-8</encoding>
     <fields>
       <field>
         <name>invoice_id</name>
@@ -487,23 +1179,23 @@
       </field>
       <field>
         <name>invoice_date</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
       <field>
         <name>due_date</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
@@ -613,7 +1305,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>23</length>
+        <length>21</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
@@ -630,12 +1322,12 @@
       </field>
       <field>
         <name>payment_date</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
@@ -663,34 +1355,34 @@
       </field>
       <field>
         <name>created_at</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
       <field>
         <name>updated_at</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <type>Date</type>
-        <format>yyyy/MM/dd HH:mm:ss.SSS</format>
+        <type>String</type>
+        <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>10</length>
         <precision>-1</precision>
         <trim_type>none</trim_type>
       </field>
@@ -726,8 +1418,138 @@
       </output>
     </remotesteps>
     <GUI>
+      <xloc>64</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>invoice_date</name>
+        <rename>invoice_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>due_date</name>
+        <rename>due_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>payment_date</name>
+        <rename>payment_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>created_at</name>
+        <rename>created_at</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>updated_at</name>
+        <rename>updated_at</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>extraction_timestamp</name>
+        <rename>extraction_timestamp</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>96</xloc>
-      <yloc>144</yloc>
+      <yloc>96</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

@@ -14,8 +14,8 @@ CREATE TABLE DIM_TEMPS (
     jour INT,
     trimestre INT,
     semaine_annee INT,
-    jour_semaine VARCHAR(20),
-    est_weekend VARCHAR(1),
+    jour_semaine VARCHAR(10),
+    est_weekend CHAR(1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -56,17 +56,17 @@ CREATE TABLE DIM_CLIENT (
 -- POPULATION OF SHARED DIMENSIONS
 -- ============================================
 
--- DIM_TEMPS
+-- DIM_TEMPS - Generate all dates for 2025
 INSERT IGNORE INTO DIM_TEMPS (id_temps, date_complete, annee, mois, jour, trimestre, semaine_annee, jour_semaine, est_weekend)
 WITH RECURSIVE dates AS (
-    SELECT '2025-01-01' as date_value
+    SELECT '2025-01-01' as date_value, 1 as seq_num
     UNION ALL
-    SELECT DATE_ADD(date_value, INTERVAL 1 DAY)
+    SELECT DATE_ADD(date_value, INTERVAL 1 DAY), seq_num + 1
     FROM dates
     WHERE date_value < '2025-12-31'
 )
 SELECT 
-    DATE_FORMAT(date_value, '%Y%m%d'),
+    seq_num,
     date_value,
     YEAR(date_value),
     MONTH(date_value),
@@ -77,7 +77,11 @@ SELECT
     CASE WHEN DAYOFWEEK(date_value) IN (1,7) THEN 'O' ELSE 'N' END
 FROM dates;
 
--- DIM_REGION
+-- Add catch-all date for unknown dates
+INSERT IGNORE INTO DIM_TEMPS (id_temps, date_complete, annee, mois, jour, trimestre, semaine_annee, jour_semaine, est_weekend) 
+VALUES (999999, '1900-01-01', 1900, 1, 1, 1, 1, 'Unknown', 'N');
+
+-- DIM_REGION - All Moroccan regions
 INSERT IGNORE INTO DIM_REGION (id_region, code_region, nom_region, pays) VALUES
 (1, 'REG01', 'Tanger-Tétouan-Al Hoceïma', 'Maroc'),
 (2, 'REG02', 'Oriental', 'Maroc'),
@@ -91,9 +95,9 @@ INSERT IGNORE INTO DIM_REGION (id_region, code_region, nom_region, pays) VALUES
 (10, 'REG10', 'Guelmim-Oued Noun', 'Maroc'),
 (11, 'REG11', 'Laâyoune-Sakia El Hamra', 'Maroc'),
 (12, 'REG12', 'Dakhla-Oued Ed-Dahab', 'Maroc'),
-(999, 'NON_R', 'Région Non Renseignée', 'Maroc');
+(999, 'UNKNOWN', 'Région Inconnue', 'Maroc');
 
--- DIM_BATIMENT
+-- DIM_BATIMENT - All buildings
 INSERT IGNORE INTO DIM_BATIMENT (id_batiment, code_batiment, nom_batiment, surface, annee_construction, type_batiment) VALUES
 (1, 'BAT001', 'DataCenter North', 5000.00, 2018, 'Industrial'),
 (2, 'BAT002', 'Office Tower Downtown', 8000.00, 2015, 'Commercial'),
@@ -111,9 +115,9 @@ INSERT IGNORE INTO DIM_BATIMENT (id_batiment, code_batiment, nom_batiment, surfa
 (14, 'BAT014', 'Cultural Center Fès', 6200.00, 2021, 'Public'),
 (15, 'BAT015', 'Medina Hotel', 5400.00, 2018, 'Hospitality'),
 (16, 'BAT016', 'Tech Park Tanger', 8500.00, 2020, 'Office'),
-(999, 'NON_RE', 'Bâtiment Non Renseigné', 0.00, 2000, 'Non Défini');
+(999, 'UNKNOWN', 'Bâtiment Inconnu', 0.00, 1900, 'Inconnu');
 
--- DIM_CLIENT
+-- DIM_CLIENT - All clients
 INSERT IGNORE INTO DIM_CLIENT (id_client, code_client, nom_client, secteur_activite) VALUES
 (1, 'CLI001', 'Tech Solutions Corp', 'Technology'),
 (2, 'CLI002', 'Green Industries', 'Manufacturing'),
@@ -124,4 +128,5 @@ INSERT IGNORE INTO DIM_CLIENT (id_client, code_client, nom_client, secteur_activ
 (7, 'CLI007', 'HealthCare Plus', 'Healthcare'),
 (8, 'CLI008', 'EduSmart', 'Education'),
 (9, 'CLI009', 'LogiTrans', 'Logistics'),
-(10, 'CLI010', 'DataCloud', 'Technology');
+(10, 'CLI010', 'DataCloud', 'Technology'),
+(999, 'UNKNOWN', 'Client Inconnu', 'Inconnu');

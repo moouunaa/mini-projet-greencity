@@ -449,20 +449,173 @@
     <index_tablespace/>
     <attributes>
       <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
         <code>PORT_NUMBER</code>
         <attribute>3306</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
       </attribute>
     </attributes>
   </connection>
   <order>
     <hop>
       <from>Input_Consommation</from>
-      <to>Database lookup</to>
+      <to>Database lookup - DIM_TEMPS</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_TEMPS</from>
+      <to>Database lookup - DIM_REGION</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_REGION</from>
+      <to>Database lookup - DIM_BATIMENT</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_BATIMENT</from>
+      <to>String operations</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>String operations</from>
+      <to>Database lookup - DIM_ENERGIE</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_ENERGIE</from>
+      <to>Calculator</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator</from>
+      <to>Database lookup - DIM_COMPTEUR</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_COMPTEUR</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Add constants</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Upsert_FAIT_CONSOMMATION</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Database lookup</name>
+    <name>Add constants</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_client</name>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>cout_energie_calcule</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>consumption_value</field_a>
+      <field_b>tarif_unitaire</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_BATIMENT</name>
     <type>DBLookup</type>
     <description/>
     <distribute>Y</distribute>
@@ -477,7 +630,205 @@
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
     <lookup>
-      <schema>dw_greencity</schema>
+      <schema>greencity_dw</schema>
+      <table>dim_batiment</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>building_code</name>
+        <field>code_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>336</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_COMPTEUR</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_compteur</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>meter_code</name>
+        <field>code_compteur</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_compteur</name>
+        <rename>id_compteur</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_ENERGIE</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_energie</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>meter_type</name>
+        <field>type_energie</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_energie</name>
+        <rename>id_energie</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+      <value>
+        <name>tarif_unitaire</name>
+        <rename>tarif_unitaire</rename>
+        <default/>
+        <type>Number</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_REGION</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_region</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>region_code</name>
+        <field>code_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>240</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_TEMPS</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
       <table>dim_temps</table>
       <orderby/>
       <fail_on_multiple>N</fail_on_multiple>
@@ -504,8 +855,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>272</xloc>
-      <yloc>64</yloc>
+      <xloc>64</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -721,8 +1072,236 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
-      <yloc>64</yloc>
+      <xloc>64</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>consumption_value</name>
+      </field>
+      <field>
+        <name>temperature</name>
+      </field>
+      <field>
+        <name>source_filename</name>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+      </field>
+      <field>
+        <name>created_at</name>
+      </field>
+      <field>
+        <name>updated_at</name>
+      </field>
+      <field>
+        <name>id_temps</name>
+      </field>
+      <field>
+        <name>id_region</name>
+      </field>
+      <field>
+        <name>id_batiment</name>
+      </field>
+      <field>
+        <name>id_energie</name>
+      </field>
+      <field>
+        <name>cout_energie_calcule</name>
+      </field>
+      <field>
+        <name>id_compteur</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>768</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>String operations</name>
+    <type>StringOperations</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>meter_type</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper/>
+        <padding_type/>
+        <pad_char/>
+        <pad_len/>
+        <init_cap/>
+        <mask_xml/>
+        <digits/>
+        <remove_special_characters/>
+      </field>
+      <field>
+        <in_stream_name>meter_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper/>
+        <padding_type/>
+        <pad_char/>
+        <pad_len/>
+        <init_cap/>
+        <mask_xml/>
+        <digits/>
+        <remove_special_characters/>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>464</xloc>
+      <yloc>32</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Upsert_FAIT_CONSOMMATION</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>fait_consommation</table>
+      <key>
+        <name>id_temps</name>
+        <field>id_temps</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_batiment</name>
+        <field>id_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_compteur</name>
+        <field>id_compteur</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_energie</name>
+        <field>id_energie</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_client</name>
+        <rename>id_client</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_energie</name>
+        <rename>id_energie</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>id_compteur</name>
+        <rename>id_compteur</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>consommation_valeur</name>
+        <rename>consumption_value</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>temperature</name>
+        <rename>temperature</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>cout_energie</name>
+        <rename>cout_energie_calcule</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>source_id</name>
+        <rename>source_filename</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>date_extraction</name>
+        <rename>extraction_timestamp</rename>
+        <update>N</update>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>176</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

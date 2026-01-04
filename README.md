@@ -1033,3 +1033,74 @@ source_type,source_filename
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 9: Select values
+Keep only fields needed for FAIT_RENTABILITE:
+
+id_temps, id_batiment, id_region, id_client
+
+id_facture, id_paiement
+
+total_ht, tva_amount, total_ttc, energy_cost
+
+
+
+
+payment_amount, marge, taux_marge, delai_paiement, taux_recouvrement
+
+source_filename, extraction_timestamp
+
+
+
+
+Step 10: Insert/Update to FAIT_RENTABILITE
+Key fields: id_temps, id_batiment, id_region, id_client, id_facture, id_paiement
+
+Update fields:
+
+montant_ht → total_ht
+
+montant_tva → tva_amount
+
+montant_ttc → total_ttc
+
+cout_energie → energy_cost
+
+montant_paye → payment_amount
+
+marge → marge (calculated)
+
+taux_marge → taux_marge (calculated)
+
+delai_paiement → delai_paiement (calculated)
+
+taux_recouvrement → taux_recouvrement (calculated)
+
+source_id → source_filename
+
+date_extraction → DATE(extraction_timestamp)
+
+
+
+
+
+
+
+
+
+
+

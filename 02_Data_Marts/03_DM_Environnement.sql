@@ -49,4 +49,5 @@ CREATE INDEX idx_fait_env_indicateur ON FAIT_ENVIRONNEMENT(id_environnement);
 INSERT IGNORE INTO DIM_ENVIRONNEMENT (id_environnement, type_indicateur, unite_mesure, seuil_optimal, seuil_alerte) VALUES 
 (1, 'CO2', 'kg', 500.00, 800.00),
 (2, 'Recyclage', 'pourcentage', 0.70, 0.50),
-(3, 'Eau_reutilisee', 'm3', 100.00, 50.00);
+(3, 'Eau_reutilisee', 'm3', 100.00, 50.00),
+(999, 'Indicateur Inconnu', 'N/A', 0.00, 0.00);

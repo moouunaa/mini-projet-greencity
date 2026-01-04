@@ -58,14 +58,11 @@ CREATE INDEX idx_fait_rent_temps ON FAIT_RENTABILITE(id_temps);
 CREATE INDEX idx_fait_rent_client ON FAIT_RENTABILITE(id_client);
 CREATE INDEX idx_fait_rent_batiment ON FAIT_RENTABILITE(id_batiment);
 
-
-
-
-
 -- ============================================
--- POPULATION OF DIM_FACTURE FROM CSV DATA
+-- POPULATION OF DIMENSIONS FROM CSV DATA
 -- ============================================
 
+-- DIM_FACTURE - All invoices from CSV
 INSERT IGNORE INTO DIM_FACTURE (id_facture, numero_facture, date_facture, date_echeance, statut_facture) VALUES
 (1, 'INV-1-2025-01', '2025-01-31', '2025-02-15', 'en attente'),
 (2, 'INV-16-2025-01', '2025-01-31', '2025-02-15', 'payée'),
@@ -82,12 +79,10 @@ INSERT IGNORE INTO DIM_FACTURE (id_facture, numero_facture, date_facture, date_e
 (13, 'INV-14-2025-01', '2025-01-31', '2025-02-15', 'payée'),
 (14, 'INV-11-2025-01', '2025-01-31', '2025-02-15', 'payée'),
 (15, 'INV-13-2025-01', '2025-01-31', '2025-02-15', 'en attente'),
-(16, 'INV-12-2025-01', '2025-01-31', '2025-02-15', 'payée');
+(16, 'INV-12-2025-01', '2025-01-31', '2025-02-15', 'payée'),
+(999, 'UNKNOWN', '1900-01-01', '1900-01-01', 'inconnu');
 
--- ============================================
--- POPULATION OF DIM_PAIEMENT FROM CSV DATA
--- ============================================
-
+-- DIM_PAIEMENT - All payment methods from CSV
 INSERT IGNORE INTO DIM_PAIEMENT (id_paiement, methode_paiement, reference_paiement) VALUES
 (1, 'Chèque', 'PAY_2'),
 (2, 'Carte Bancaire', 'PAY_4'),
@@ -104,4 +99,45 @@ INSERT IGNORE INTO DIM_PAIEMENT (id_paiement, methode_paiement, reference_paieme
 (13, 'Non Payé', 'PAY_6'),
 (14, 'Non Payé', 'PAY_9'),
 (15, 'Non Payé', 'PAY_12'),
-(16, 'Non Payé', 'PAY_15');
+(16, 'Non Payé', 'PAY_15'),
+(999, 'Inconnu', 'UNKNOWN');
+
+-- ============================================
+-- SAMPLE DATA LOADING SCRIPT FOR FAIT_RENTABILITE
+-- ============================================
+/*
+-- Use this to load data from transformed_rentabilite.csv:
+LOAD DATA LOCAL INFILE 'transformed_rentabilite.csv'
+INTO TABLE FAIT_RENTABILITE
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(@invoice_id, @invoice_number, @invoice_date, @due_date, @total_ht, @tva_amount, @total_ttc, 
+ @energy_cost, @status, @client_code, @client_name, @sector, @building_code, @building_name, 
+ @region_code, @payment_date, @payment_amount, @payment_method, @created_at, @updated_at, 
+ @extraction_timestamp, @source_type, @source_filename)
+SET
+    id_temps = (SELECT id_temps FROM DIM_TEMPS WHERE date_complete = @invoice_date),
+    id_batiment = (SELECT id_batiment FROM DIM_BATIMENT WHERE code_batiment = @building_code),
+    id_region = (SELECT id_region FROM DIM_REGION WHERE code_region = @region_code),
+    id_client = (SELECT id_client FROM DIM_CLIENT WHERE code_client = @client_code),
+    id_facture = (SELECT id_facture FROM DIM_FACTURE WHERE numero_facture = @invoice_number),
+    id_paiement = (SELECT id_paiement FROM DIM_PAIEMENT WHERE methode_paiement = @payment_method),
+    montant_ht = @total_ht,
+    montant_tva = @tva_amount,
+    montant_ttc = @total_ttc,
+    cout_energie = @energy_cost,
+    montant_paye = IFNULL(@payment_amount, 0),
+    marge = @total_ht - @energy_cost,
+    taux_marge = CASE WHEN @total_ht > 0 THEN ((@total_ht - @energy_cost) / @total_ht) * 100 ELSE 0 END,
+    delai_paiement = DATEDIFF(IFNULL(@payment_date, CURDATE()), @due_date),
+    taux_recouvrement = CASE WHEN @status = 'paid' THEN 100.00 ELSE 0.00 END,
+    rentabilite_categorie = CASE 
+        WHEN (@total_ht - @energy_cost) / @total_ht >= 0.3 THEN 'Haute'
+        WHEN (@total_ht - @energy_cost) / @total_ht >= 0.1 THEN 'Moyenne'
+        ELSE 'Basse'
+    END,
+    source_id = CONCAT(@source_type, '-', @invoice_id),
+    date_extraction = DATE(@extraction_timestamp);
+*/

@@ -1,0 +1,234 @@
+
+
+## 🧪 **Tests pour `FAIT_RENTABILITE` :**
+
+### **Étape 1 : Tests de base (comme pour consommation)**
+
+```sql
+USE greencity_dw;
+
+-- 1. Nombre total de factures chargées
+SELECT COUNT(*) as total_factures FROM FAIT_RENTABILITE;
+
+-- 2. Vérifier les NULLs (attention: certains peuvent être OK)
+SELECT 
+    COUNT(CASE WHEN id_temps IS NULL THEN 1 END) as null_temps,
+    COUNT(CASE WHEN id_region IS NULL THEN 1 END) as null_region,
+    COUNT(CASE WHEN id_batiment IS NULL THEN 1 END) as null_batiment,
+    COUNT(CASE WHEN id_client IS NULL THEN 1 END) as null_client,
+    COUNT(CASE WHEN id_facture IS NULL THEN 1 END) as null_facture,
+    COUNT(CASE WHEN id_paiement IS NULL THEN 1 END) as null_paiement,
+    COUNT(*) as total
+FROM FAIT_RENTABILITE;
+
+-- 3. Échantillon des données
+SELECT 
+    fr.id_fait,
+    df.numero_facture,
+    fr.montant_ttc,
+    fr.cout_energie,
+    fr.marge,
+    fr.taux_marge,
+    fr.delai_paiement,
+    fr.taux_recouvrement
+FROM FAIT_RENTABILITE fr
+LEFT JOIN DIM_FACTURE df ON fr.id_facture = df.id_facture
+LIMIT 10;
+```
+
+### **Étape 2 : Tests financiers SPÉCIFIQUES**
+
+```sql
+-- 1. Vérifier le calcul de la marge (KPI important !)
+SELECT 
+    montant_ttc,
+    cout_energie,
+    marge,
+    ROUND(marge / montant_ttc * 100, 2) as taux_marge_calcule,
+    taux_marge as taux_marge_stocke,
+    CASE 
+        WHEN ABS(ROUND(marge / montant_ttc * 100, 2) - taux_marge) > 0.01 
+        THEN 'ERREUR' 
+        ELSE 'OK' 
+    END as verification
+FROM FAIT_RENTABILITE
+WHERE montant_ttc > 0
+LIMIT 10;
+
+-- 2. Vérifier le taux de recouvrement
+SELECT 
+    montant_ttc,
+    montant_paye,
+    taux_recouvrement,
+    ROUND(montant_paye / montant_ttc * 100, 2) as taux_calcule,
+    CASE 
+        WHEN montant_ttc = 0 THEN 'Facture à 0'
+        WHEN ABS(ROUND(montant_paye / montant_ttc * 100, 2) - taux_recouvrement) > 0.01 
+        THEN 'ERREUR' 
+        ELSE 'OK' 
+    END as verification
+FROM FAIT_RENTABILITE
+LIMIT 10;
+
+-- 3. Vérifier le délai de paiement
+SELECT 
+    delai_paiement,
+    COUNT(*) as nb_factures,
+    CASE 
+        WHEN delai_paiement < 0 THEN 'Paiement anticipé'
+        WHEN delai_paiement = 0 THEN 'Paiement à date'
+        WHEN delai_paiement > 0 THEN 'Retard'
+        WHEN delai_paiement IS NULL THEN 'Non payé'
+    END as statut
+FROM FAIT_RENTABILITE
+GROUP BY delai_paiement
+ORDER BY delai_paiement;
+
+-- 4. Vérifier les incohérences logiques
+SELECT 
+    'Marge négative' as probleme,
+    COUNT(*) as nb
+FROM FAIT_RENTABILITE
+WHERE marge < 0
+UNION ALL
+SELECT 
+    'Taux recouvrement > 100%',
+    COUNT(*)
+FROM FAIT_RENTABILITE
+WHERE taux_recouvrement > 100
+UNION ALL
+SELECT 
+    'Taux marge > 100%',
+    COUNT(*)
+FROM FAIT_RENTABILITE
+WHERE taux_marge > 100;
+```
+
+### **Étape 3 : Tests métier (KPI du projet)**
+
+```sql
+-- 1. KPI: Chiffre d'affaires total (CA)
+SELECT 
+    SUM(montant_ttc) as chiffre_affaires_total,
+    SUM(montant_paye) as montant_recouvre,
+    SUM(cout_energie) as cout_energie_total,
+    SUM(marge) as marge_totale
+FROM FAIT_RENTABILITE;
+
+-- 2. KPI: CA par région
+SELECT 
+    r.nom_region,
+    SUM(fr.montant_ttc) as ca_region,
+    SUM(fr.marge) as marge_region,
+    ROUND(AVG(fr.taux_marge), 2) as taux_marge_moyen
+FROM FAIT_RENTABILITE fr
+JOIN DIM_REGION r ON fr.id_region = r.id_region
+GROUP BY r.nom_region
+ORDER BY ca_region DESC;
+
+-- 3. KPI: CA par client (classement clients rentables)
+SELECT 
+    c.nom_client,
+    c.secteur_activite,
+    SUM(fr.montant_ttc) as ca_client,
+    SUM(fr.marge) as marge_client,
+    ROUND(AVG(fr.taux_marge), 2) as taux_marge_moyen,
+    COUNT(DISTINCT fr.id_facture) as nb_factures
+FROM FAIT_RENTABILITE fr
+JOIN DIM_CLIENT c ON fr.id_client = c.id_client
+GROUP BY c.nom_client, c.secteur_activite
+ORDER BY marge_client DESC;
+
+-- 4. KPI: Taux de recouvrement global
+SELECT 
+    SUM(montant_paye) as total_recouvre,
+    SUM(montant_ttc) as total_a_recouvrer,
+    ROUND(SUM(montant_paye) / SUM(montant_ttc) * 100, 2) as taux_recouvrement_global
+FROM FAIT_RENTABILITE
+WHERE montant_ttc > 0;
+
+-- 5. KPI: Rentabilité par type d'énergie (si tu as cette info)
+-- Sinon par bâtiment
+SELECT 
+    b.nom_batiment,
+    SUM(fr.montant_ttc) as ca_batiment,
+    SUM(fr.cout_energie) as cout_energie_batiment,
+    SUM(fr.marge) as marge_batiment,
+    ROUND(SUM(fr.marge) / SUM(fr.montant_ttc) * 100, 2) as rentabilite_batiment
+FROM FAIT_RENTABILITE fr
+JOIN DIM_BATIMENT b ON fr.id_batiment = b.id_batiment
+GROUP BY b.nom_batiment
+ORDER BY rentabilite_batiment DESC;
+```
+
+### **Étape 4 : Tests d'intégrité**
+
+```sql
+-- 1. Vérifier les clés étrangères
+SELECT COUNT(*) as lignes_orphelines
+FROM FAIT_RENTABILITE fr
+LEFT JOIN DIM_TEMPS t ON fr.id_temps = t.id_temps
+LEFT JOIN DIM_REGION r ON fr.id_region = r.id_region
+LEFT JOIN DIM_BATIMENT b ON fr.id_batiment = b.id_batiment
+LEFT JOIN DIM_CLIENT c ON fr.id_client = c.id_client
+LEFT JOIN DIM_FACTURE df ON fr.id_facture = df.id_facture
+LEFT JOIN DIM_PAIEMENT dp ON fr.id_paiement = dp.id_paiement
+WHERE t.id_temps IS NULL 
+   OR r.id_region IS NULL 
+   OR b.id_batiment IS NULL
+   OR c.id_client IS NULL
+   OR df.id_facture IS NULL
+   OR dp.id_paiement IS NULL;
+
+-- 2. Vérifier les doublons (une facture = une ligne)
+SELECT 
+    id_facture,
+    COUNT(*) as nb_occurrences
+FROM FAIT_RENTABILITE
+GROUP BY id_facture
+HAVING COUNT(*) > 1;
+
+-- 3. Cohérence temporelle
+SELECT 
+    'Factures avec due_date < invoice_date' as verification,
+    COUNT(*) as nb
+FROM FAIT_RENTABILITE fr
+JOIN DIM_FACTURE df ON fr.id_facture = df.id_facture
+WHERE df.date_echeance < df.date_facture;
+```
+
+---
+
+## 🎯 **Tests CRITIQUES pour le projet :**
+
+Exécute **au minimum** ces 3 requêtes pour valider :
+
+```sql
+-- 1. KPI principal: CA total (doit être > 0)
+SELECT 
+    'Chiffre d\'Affaires Total' as KPI,
+    SUM(montant_ttc) as valeur,
+    '€' as unite
+FROM FAIT_RENTABILITE;
+
+-- 2. KPI: Taux de recouvrement (doit être entre 0-100%)
+SELECT 
+    'Taux de Recouvrement Global' as KPI,
+    ROUND(SUM(montant_paye) / SUM(montant_ttc) * 100, 2) as valeur,
+    '%' as unite
+FROM FAIT_RENTABILITE
+WHERE montant_ttc > 0;
+
+-- 3. KPI: Classement clients rentables
+SELECT 
+    c.nom_client,
+    SUM(fr.marge) as marge_totale,
+    ROUND(AVG(fr.taux_marge), 2) as taux_marge_moyen
+FROM FAIT_RENTABILITE fr
+JOIN DIM_CLIENT c ON fr.id_client = c.id_client
+GROUP BY c.nom_client
+ORDER BY marge_totale DESC
+LIMIT 5;
+```
+
+---

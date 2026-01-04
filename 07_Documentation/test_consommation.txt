@@ -1,0 +1,173 @@
+Félicitations ! 🎉 La transformation a réussi ! Maintenant, testons.
+
+## 🧪 **Comment tester ton chargement :**
+
+### **Étape 1 : Vérifier dans MySQL**
+
+```sql
+USE greencity_dw;
+
+-- 1. Nombre total de lignes chargées
+SELECT COUNT(*) as total_lignes FROM FAIT_CONSOMMATION;
+
+-- 2. Vérifier les NULLs (devraient être peu ou pas)
+SELECT 
+    COUNT(CASE WHEN id_temps IS NULL THEN 1 END) as null_temps,
+    COUNT(CASE WHEN id_region IS NULL THEN 1 END) as null_region,
+    COUNT(CASE WHEN id_batiment IS NULL THEN 1 END) as null_batiment,
+    COUNT(CASE WHEN id_energie IS NULL THEN 1 END) as null_energie,
+    COUNT(CASE WHEN id_compteur IS NULL THEN 1 END) as null_compteur,
+    COUNT(*) as total
+FROM FAIT_CONSOMMATION;
+
+-- 3. Vérifier un échantillon
+SELECT * FROM FAIT_CONSOMMATION LIMIT 5;
+
+-- 4. Vérifier par type d'énergie
+SELECT 
+    e.type_energie,
+    COUNT(f.id_fait) as nb_mesures,
+    SUM(f.consommation_valeur) as total_consommation,
+    AVG(f.temperature) as temperature_moyenne
+FROM FAIT_CONSOMMATION f
+JOIN DIM_ENERGIE e ON f.id_energie = e.id_energie
+GROUP BY e.type_energie;
+
+-- 5. Vérifier que cout_energie est bien calculé
+SELECT 
+    consommation_valeur,
+    cout_energie,
+    ROUND(cout_energie / consommation_valeur, 4) as tarif_calcule
+FROM FAIT_CONSOMMATION 
+WHERE consommation_valeur > 0
+LIMIT 5;
+```
+
+### **Étape 2 : Vérifier la cohérence des données**
+
+```sql
+-- 1. Vérifier les jointures avec dimensions
+SELECT 
+    'DIM_TEMPS' as table_dim,
+    COUNT(DISTINCT f.id_temps) as nb_temps_fait,
+    (SELECT COUNT(*) FROM DIM_TEMPS) as nb_temps_dim
+FROM FAIT_CONSOMMATION f
+UNION ALL
+SELECT 
+    'DIM_REGION',
+    COUNT(DISTINCT f.id_region),
+    (SELECT COUNT(*) FROM DIM_REGION)
+FROM FAIT_CONSOMMATION f
+UNION ALL
+SELECT 
+    'DIM_BATIMENT',
+    COUNT(DISTINCT f.id_batiment),
+    (SELECT COUNT(*) FROM DIM_BATIMENT)
+FROM FAIT_CONSOMMATION f;
+
+-- 2. Vérifier les valeurs extrêmes (pour détecter erreurs)
+SELECT 
+    MIN(consommation_valeur) as min_consommation,
+    MAX(consommation_valeur) as max_consommation,
+    AVG(consommation_valeur) as moy_consommation,
+    MIN(temperature) as min_temp,
+    MAX(temperature) as max_temp,
+    AVG(temperature) as moy_temp
+FROM FAIT_CONSOMMATION;
+```
+
+### **Étape 3 : Tester quelques requêtes d'analyse (KPI du projet)**
+
+```sql
+-- 1. KPI: Consommation totale par région
+SELECT 
+    r.nom_region,
+    SUM(f.consommation_valeur) as consommation_totale,
+    SUM(f.cout_energie) as cout_total
+FROM FAIT_CONSOMMATION f
+JOIN DIM_REGION r ON f.id_region = r.id_region
+GROUP BY r.nom_region
+ORDER BY consommation_totale DESC;
+
+-- 2. KPI: Consommation par type d'énergie et par bâtiment
+SELECT 
+    b.nom_batiment,
+    e.type_energie,
+    SUM(f.consommation_valeur) as consommation_totale
+FROM FAIT_CONSOMMATION f
+JOIN DIM_BATIMENT b ON f.id_batiment = b.id_batiment
+JOIN DIM_ENERGIE e ON f.id_energie = e.id_energie
+GROUP BY b.nom_batiment, e.type_energie
+ORDER BY b.nom_batiment, e.type_energie;
+
+-- 3. KPI: Évolution dans le temps (par mois)
+SELECT 
+    t.annee,
+    t.mois,
+    SUM(f.consommation_valeur) as consommation_mensuelle
+FROM FAIT_CONSOMMATION f
+JOIN DIM_TEMPS t ON f.id_temps = t.id_temps
+GROUP BY t.annee, t.mois
+ORDER BY t.annee, t.mois;
+```
+
+---
+
+## 📊 **Ce que tu dois vérifier spécifiquement :**
+
+### ✅ **1. Complétude des données**
+- Tous les `id_compteur` remplis ? (après tes ajouts)
+- Tous les `id_energie` remplis ? (élec=1, eau=2, gaz=3)
+- `cout_energie` bien calculé ? (valeur × tarif)
+
+### ✅ **2. Cohérence dimensionnelle**
+- Chaque `id_temps` existe dans `DIM_TEMPS` ?
+- Chaque `id_region` dans `DIM_REGION` ?
+- Chaque `id_batiment` dans `DIM_BATIMENT` ?
+
+### ✅ **3. Qualité des données**
+- Pas de valeurs négatives pour consommation
+- Températures dans une plage réaliste (-20°C à 50°C)
+- Pas de doublons (même `id_temps + id_batiment + id_compteur`)
+
+---
+
+## 🚨 **Tests critiques (essentiels) :**
+
+```sql
+-- Test 1: Aucun doublon sur la clé naturelle
+SELECT 
+    id_temps, id_batiment, id_compteur, id_energie,
+    COUNT(*) as nb_doublons
+FROM FAIT_CONSOMMATION
+GROUP BY id_temps, id_batiment, id_compteur, id_energie
+HAVING COUNT(*) > 1;
+
+-- Test 2: Toutes les clés étrangères valides
+SELECT COUNT(*) as lignes_orphelines
+FROM FAIT_CONSOMMATION f
+LEFT JOIN DIM_TEMPS t ON f.id_temps = t.id_temps
+LEFT JOIN DIM_REGION r ON f.id_region = r.id_region
+LEFT JOIN DIM_BATIMENT b ON f.id_batiment = b.id_batiment
+LEFT JOIN DIM_ENERGIE e ON f.id_energie = e.id_energie
+LEFT JOIN DIM_COMPTEUR c ON f.id_compteur = c.id_compteur
+WHERE t.id_temps IS NULL 
+   OR r.id_region IS NULL 
+   OR b.id_batiment IS NULL
+   OR e.id_energie IS NULL
+   OR c.id_compteur IS NULL;
+```
+
+---
+
+## 📈 **Pour valider ton projet :**
+
+Exécute ces **3 requêtes principales** et montre les résultats dans ton rapport :
+
+1. **Consommation totale par région** (KPI principal)
+2. **Consommation par type d'énergie** 
+3. **Évolution mensuelle** (graphique en courbe)
+
+---
+
+**Exécute d'abord les tests critiques. Si tout est OK, passe aux Data Marts suivants !**
