@@ -95,7 +95,7 @@ INSERT IGNORE INTO DIM_REGION (id_region, code_region, nom_region, pays) VALUES
 (10, 'REG10', 'Guelmim-Oued Noun', 'Maroc'),
 (11, 'REG11', 'Laâyoune-Sakia El Hamra', 'Maroc'),
 (12, 'REG12', 'Dakhla-Oued Ed-Dahab', 'Maroc'),
-(999, 'UNKNOWN', 'Région Inconnue', 'Maroc');
+(999, 'NON_R', 'Région Inconnue', 'Maroc');
 
 -- DIM_BATIMENT - All buildings
 INSERT IGNORE INTO DIM_BATIMENT (id_batiment, code_batiment, nom_batiment, surface, annee_construction, type_batiment) VALUES
@@ -115,7 +115,7 @@ INSERT IGNORE INTO DIM_BATIMENT (id_batiment, code_batiment, nom_batiment, surfa
 (14, 'BAT014', 'Cultural Center Fès', 6200.00, 2021, 'Public'),
 (15, 'BAT015', 'Medina Hotel', 5400.00, 2018, 'Hospitality'),
 (16, 'BAT016', 'Tech Park Tanger', 8500.00, 2020, 'Office'),
-(999, 'UNKNOWN', 'Bâtiment Inconnu', 0.00, 1900, 'Inconnu');
+(999, 'NON_RE', 'Bâtiment Inconnu', 0.00, 1900, 'Inconnu');
 
 -- DIM_CLIENT - All clients
 INSERT IGNORE INTO DIM_CLIENT (id_client, code_client, nom_client, secteur_activite) VALUES

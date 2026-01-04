@@ -482,11 +482,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>trim</from>
-      <to>Filter rows 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Filter rows 3</from>
       <to>Modified JavaScript value 2</to>
       <enabled>Y</enabled>
@@ -517,26 +512,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows 2</from>
-      <to>Select values 6</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Modified JavaScript value</from>
-      <to>Text file output</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values 3</from>
-      <to>Filter rows 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values 6</from>
-      <to>Modified JavaScript value</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Append streams 2</from>
       <to>Filter rows</to>
       <enabled>Y</enabled>
@@ -544,6 +519,131 @@
     <hop>
       <from>Modified JavaScript value 2</from>
       <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 2</from>
+      <to>Replace in string</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Replace in string</from>
+      <to>Select values 6</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 6</from>
+      <to>Select values 7</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 7</from>
+      <to>Filter rows 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 4</from>
+      <to>Filter rows 5</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 5</from>
+      <to>Filter rows 6</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 5</from>
+      <to>Select values 8</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 8</from>
+      <to>Select values 10</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 9</from>
+      <to>Select values 11</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 6</from>
+      <to>Replace in string 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Replace in string 2</from>
+      <to>Select values 9</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 10</from>
+      <to>Append streams 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 4</from>
+      <to>Select values 12</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 12</from>
+      <to>Append streams 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Append streams 3</from>
+      <to>Append streams 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 11</from>
+      <to>Append streams 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>trim</from>
+      <to>Filter rows 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants 3</from>
+      <to>Calculator</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 3</from>
+      <to>Add constants 3 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants 3 2</from>
+      <to>Calculator 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator 2</from>
+      <to>Filter rows 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants 4</from>
+      <to>Calculator 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Append streams 4</from>
+      <to>Add constants 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator 3</from>
+      <to>Select values 13</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 13</from>
+      <to>Text file output</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -638,6 +738,84 @@
     </GUI>
   </step>
   <step>
+    <name>Add constants 3</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>constant</name>
+        <type>BigNumber</type>
+        <format>#.###</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>100</nullif>
+        <length>5</length>
+        <precision>3</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>627</xloc>
+      <yloc>428</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants 3 2</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>constant</name>
+        <type>BigNumber</type>
+        <format>#.###</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>100</nullif>
+        <length>5</length>
+        <precision>3</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Append streams</name>
     <type>Append</type>
     <description/>
@@ -687,7 +865,61 @@
     </remotesteps>
     <GUI>
       <xloc>848</xloc>
-      <yloc>368</yloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Append streams 3</name>
+    <type>Append</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <head_name>Select values 12</head_name>
+    <tail_name>Select values 10</tail_name>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>128</xloc>
+      <yloc>704</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Append streams 4</name>
+    <type>Append</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <head_name>Append streams 3</head_name>
+    <tail_name>Select values 11</tail_name>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>832</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -972,6 +1204,88 @@
     </GUI>
   </step>
   <step>
+    <name>Calculator</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>recycling_rate_percent</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>recycling_rate</field_a>
+      <field_b>constant</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>723</xloc>
+      <yloc>428</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator 2</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>recycling_rate_percent</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>recycling_rate</field_a>
+      <field_b>constant</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Dummy</name>
     <type>Dummy</type>
     <description/>
@@ -991,8 +1305,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
-      <yloc>496</yloc>
+      <xloc>752</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1056,8 +1370,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
-      <yloc>368</yloc>
+      <xloc>752</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1072,7 +1386,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Select values 6</send_true_to>
+    <send_true_to>Replace in string</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -1153,8 +1467,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
-      <yloc>368</yloc>
+      <xloc>384</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1224,8 +1538,8 @@
     </GUI>
   </step>
   <step>
-    <name>Modified JavaScript value</name>
-    <type>ScriptValueMod</type>
+    <name>Filter rows 4</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1234,31 +1548,25 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <compatible>N</compatible>
-    <optimizationLevel>9</optimizationLevel>
-    <jsScripts>
-      <jsScript>
-        <jsScript_type>0</jsScript_type>
-        <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>// Normaliser toutes les dates en yyyy-MM-dd
-var dateStr = report_date.toString().trim();
-
-if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    // Déjà bon
-    report_date = dateStr;
-} 
-else if (dateStr.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
-    // 2025/01/31 → 2025-01-31
-    report_date = dateStr.replace(/\//g, '-');
-}
-else if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-    // 31/03/2025 → 2025-03-31
-    var parts = dateStr.split('/');
-    report_date = parts[2] + '-' + parts[1] + '-' + parts[0];
-}</jsScript_script>
-      </jsScript>
-    </jsScripts>
-    <fields>    </fields>
+    <send_true_to>Select values 12</send_true_to>
+    <send_false_to>Filter rows 5</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>report_date</leftvalue>
+        <function>REGEXP</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>^[0-9]{4}-[0-9]{2}-[0-9]{2}$</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1268,8 +1576,96 @@ else if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
       </output>
     </remotesteps>
     <GUI>
-      <xloc>176</xloc>
-      <yloc>368</yloc>
+      <xloc>48</xloc>
+      <yloc>400</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows 5</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Select values 8</send_true_to>
+    <send_false_to>Filter rows 6</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>report_date</leftvalue>
+        <function>REGEXP</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>^[0-9]{4}/[0-9]{2}/[0-9]{2}$</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>400</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows 6</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Replace in string 2</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>report_date</leftvalue>
+        <function>REGEXP</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>^[0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}$</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>400</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1342,6 +1738,108 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     </GUI>
   </step>
   <step>
+    <name>Replace in string</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>extraction_timestamp</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^(\d{4}/\d{2}/\d{2}).*$</replace_string>
+        <replace_by_string>$1</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>created_at</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^(\d{4}/\d{2}/\d{2}).*$</replace_string>
+        <replace_by_string>$1</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>updated_at</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^(\d{4}/\d{2}/\d{2}).*$</replace_string>
+        <replace_by_string>$1</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Replace in string 2</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>report_date</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^(\d{4}/\d{2}/\d{2}).*$</replace_string>
+        <replace_by_string>$1</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>496</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Select values</name>
     <type>SelectValues</type>
     <description/>
@@ -1376,6 +1874,141 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     </GUI>
   </step>
   <step>
+    <name>Select values 10</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>report_date</name>
+        <rename>report_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>608</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 11</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>report_date</name>
+        <rename>report_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>688</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 12</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>report_date</name>
+        <rename>report_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>512</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Select values 2</name>
     <type>SelectValues</type>
     <description/>
@@ -1393,7 +2026,6 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>report_date</name>
-        <rename/>
       </field>
       <field>
         <name>building_clean</name>
@@ -1401,31 +2033,24 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>emission_co2_kg</name>
-        <rename/>
       </field>
       <field>
         <name>recycling_rate</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1439,7 +2064,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     </remotesteps>
     <GUI>
       <xloc>1008</xloc>
-      <yloc>368</yloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1500,8 +2125,8 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </output>
     </remotesteps>
     <GUI>
-      <xloc>592</xloc>
-      <yloc>368</yloc>
+      <xloc>640</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1651,7 +2276,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy/MM/dd HH:mm:ss.SSS</conversion_mask>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1668,7 +2293,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy/MM/dd HH:mm:ss.SSS</conversion_mask>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1685,7 +2310,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy/MM/dd HH:mm:ss.SSS</conversion_mask>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1706,8 +2331,177 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>368</yloc>
+      <xloc>160</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 7</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>extraction_timestamp</name>
+        <rename>extraction_timestamp</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>created_at</name>
+        <rename>created_at</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>updated_at</name>
+        <rename>updated_at</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>48</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 8</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>report_date</name>
+        <rename>report_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>224</xloc>
+      <yloc>512</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 9</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>report_date</name>
+        <rename>report_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>400</xloc>
+      <yloc>592</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1767,8 +2561,8 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>report_date</name>
-        <type>String</type>
-        <format/>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
         <currency/>
         <decimal/>
         <group/>
@@ -1791,32 +2585,44 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>emission_co2_kg</name>
-        <type>String</type>
-        <format/>
+        <type>BigNumber</type>
+        <format>#.##</format>
         <currency/>
-        <decimal/>
-        <group/>
+        <decimal>.</decimal>
+        <group>,</group>
         <nullif/>
         <trim_type>none</trim_type>
-        <length>15</length>
-        <precision>-1</precision>
+        <length>7</length>
+        <precision>2</precision>
       </field>
       <field>
         <name>recycling_rate</name>
-        <type>String</type>
+        <type>BigNumber</type>
+        <format>#.###</format>
+        <currency/>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <length>5</length>
+        <precision>3</precision>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <type>BigNumber</type>
         <format/>
         <currency/>
         <decimal/>
         <group/>
         <nullif/>
         <trim_type>none</trim_type>
-        <length>5</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <type>String</type>
-        <format/>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
         <currency/>
         <decimal/>
         <group/>
@@ -1851,8 +2657,8 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>created_at</name>
-        <type>String</type>
-        <format/>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
         <currency/>
         <decimal/>
         <group/>
@@ -1863,8 +2669,8 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>updated_at</name>
-        <type>String</type>
-        <format/>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
         <currency/>
         <decimal/>
         <group/>
@@ -1883,8 +2689,8 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </output>
     </remotesteps>
     <GUI>
-      <xloc>48</xloc>
-      <yloc>368</yloc>
+      <xloc>272</xloc>
+      <yloc>1360</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2438,6 +3244,158 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     <GUI>
       <xloc>560</xloc>
       <yloc>64</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants 4</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>constant</name>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>100</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>944</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator 3</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>recycling_rate_percent</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>recycling_rate</field_a>
+      <field_b>constant</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>1072</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 13</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>region_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>report_date</name>
+        <rename/>
+      </field>
+      <field>
+        <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <rename/>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_type</name>
+        <rename/>
+      </field>
+      <field>
+        <name>created_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>updated_at</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>1200</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
