@@ -519,18 +519,38 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Database lookup - DIM_COMPTEUR</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values</from>
       <to>Add constants</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Database lookup - DIM_COMPTEUR</from>
+      <to>Convert Data Types</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Convert Data Types</from>
+      <to>Calcul KPIs Journaliers</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Convert Data Types</from>
+      <to>Merge join</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calcul KPIs Journaliers</from>
+      <to>Merge join</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Merge join</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Add constants</from>
-      <to>Upsert_FAIT_CONSOMMATION</to>
+      <to>Insert / update</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -568,8 +588,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>560</xloc>
-      <yloc>288</yloc>
+      <xloc>320</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -609,7 +629,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>752</xloc>
+      <xloc>800</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
@@ -657,7 +677,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
+      <xloc>384</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -705,7 +725,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>880</xloc>
+      <xloc>928</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -759,7 +779,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>576</xloc>
+      <xloc>624</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -807,7 +827,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
+      <xloc>288</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
@@ -855,7 +875,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>64</xloc>
+      <xloc>112</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -959,7 +979,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>5</length>
+        <length>15</length>
         <precision>2</precision>
         <trim_type>none</trim_type>
       </field>
@@ -1072,7 +1092,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>64</xloc>
+      <xloc>112</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1091,39 +1111,63 @@
     <fields>
       <field>
         <name>consumption_value</name>
+        <rename/>
       </field>
       <field>
         <name>temperature</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <field>
         <name>id_temps</name>
+        <rename/>
       </field>
       <field>
         <name>id_region</name>
+        <rename/>
       </field>
       <field>
         <name>id_batiment</name>
+        <rename/>
       </field>
       <field>
         <name>id_energie</name>
+        <rename/>
       </field>
       <field>
         <name>cout_energie_calcule</name>
+        <rename/>
       </field>
       <field>
         <name>id_compteur</name>
+        <rename/>
+      </field>
+      <field>
+        <name>cons_moyenne</name>
+        <rename/>
+      </field>
+      <field>
+        <name>cons_max</name>
+        <rename/>
+      </field>
+      <field>
+        <name>cons_min</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1136,8 +1180,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>768</xloc>
-      <yloc>288</yloc>
+      <xloc>432</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1189,13 +1233,167 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
+      <xloc>512</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Upsert_FAIT_CONSOMMATION</name>
+    <name>Calcul KPIs Journaliers</name>
+    <type>GroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <all_rows>N</all_rows>
+    <ignore_aggregate>N</ignore_aggregate>
+    <field_ignore/>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>grp</prefix>
+    <add_linenr>N</add_linenr>
+    <linenr_fieldname/>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>building_code</name>
+      </field>
+    </group>
+    <fields>
+      <field>
+        <aggregate>cons_moyenne</aggregate>
+        <subject>consumption_value</subject>
+        <type>AVERAGE</type>
+        <valuefield/>
+      </field>
+      <field>
+        <aggregate>cons_max</aggregate>
+        <subject>consumption_value</subject>
+        <type>MAX</type>
+        <valuefield/>
+      </field>
+      <field>
+        <aggregate>cons_min</aggregate>
+        <subject>consumption_value</subject>
+        <type>MIN</type>
+        <valuefield/>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>928</xloc>
+      <yloc>368</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Convert Data Types</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>consumption_value</name>
+        <rename>consumption_value</rename>
+        <type>BigNumber</type>
+        <length>10</length>
+        <precision>2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>building_code</name>
+        <rename>building_code</rename>
+        <type>String</type>
+        <length>6</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>928</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Merge join</name>
+    <type>MergeJoin</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <join_type>FULL OUTER</join_type>
+    <step1>Convert Data Types</step1>
+    <step2>Calcul KPIs Journaliers</step2>
+    <keys_1>
+      <key>building_code</key>
+    </keys_1>
+    <keys_2>
+      <key>building_code</key>
+    </keys_2>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>656</xloc>
+      <yloc>352</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Insert / update</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -1224,8 +1422,8 @@
         <name2/>
       </key>
       <key>
-        <name>id_compteur</name>
-        <field>id_compteur</field>
+        <name>id_region</name>
+        <field>id_region</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -1235,60 +1433,81 @@
         <condition>=</condition>
         <name2/>
       </key>
+      <key>
+        <name>id_compteur</name>
+        <field>id_compteur</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
       <value>
         <name>id_temps</name>
         <rename>id_temps</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>id_batiment</name>
         <rename>id_batiment</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>id_region</name>
         <rename>id_region</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>id_client</name>
         <rename>id_client</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>id_energie</name>
         <rename>id_energie</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>id_compteur</name>
         <rename>id_compteur</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>consommation_valeur</name>
         <rename>consumption_value</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>temperature</name>
         <rename>temperature</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>cout_energie</name>
         <rename>cout_energie_calcule</rename>
-        <update>N</update>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>consommation_moyenne_jour</name>
+        <rename>cons_moyenne</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>consommation_max_jour</name>
+        <rename>cons_max</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>consommation_min_jour</name>
+        <rename>cons_min</rename>
+        <update>Y</update>
       </value>
       <value>
         <name>source_id</name>
         <rename>source_filename</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
       <value>
         <name>date_extraction</name>
         <rename>extraction_timestamp</rename>
-        <update>N</update>
+        <update>Y</update>
       </value>
     </lookup>
     <attributes/>
@@ -1300,8 +1519,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>176</xloc>
-      <yloc>288</yloc>
+      <xloc>192</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
