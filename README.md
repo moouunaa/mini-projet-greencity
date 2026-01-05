@@ -2655,3 +2655,34 @@ SOURCE DE DONNÉES TRANSFORMÉES :
 
 
 
+ Configuration de l'Automatisation avec Task Scheduler
+Étape 1 : Préparer les fichiers batch
+1.1 run_etl.bat (racine du projet) :
+
+batch
+@echo off
+cd /d "C:\Users\hp\Desktop\pdi-ce-10.2.0.0-222\data-integration"
+call Kitchen.bat /file:"C:\Users\hp\Desktop\mini projet - greencity\04_ETL_Pentaho\jobs\Main_ETL_Job.kjb" /level:Basic
+pause
+1.2 run_scheduled.bat (racine du projet) :
+
+batch
+@echo off
+cd /d "C:\Users\hp\Desktop\mini projet - greencity"
+call run_etl.bat
+Étape 2 : Configurer Task Scheduler
+Ouvrir Task Scheduler (Windows + R → taskschd.msc)
+
+Créer une tâche → "Créer une tâche de base"
+
+Nom : GreenCity_ETL_Daily
+
+Description : Exécution quotidienne du processus ETL à 02:00
+
+Déclencheur : Quotidien, Début : 05/01/2026, Heure : 02:00
+
+Action : Démarrer un programme
+
+Programme : C:\Users\hp\Desktop\mini projet - greencity\run_scheduled.bat
+
+Terminer
