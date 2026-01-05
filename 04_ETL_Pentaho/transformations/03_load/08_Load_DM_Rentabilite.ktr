@@ -469,6 +469,10 @@
         <attribute>N</attribute>
       </attribute>
       <attribute>
+        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
         <code>PORT_NUMBER</code>
         <attribute>3306</attribute>
       </attribute>
@@ -535,11 +539,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Calculator</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values 2</from>
       <to>String operations</to>
       <enabled>Y</enabled>
@@ -552,6 +551,16 @@
     <hop>
       <from>Select values</from>
       <to>Insert / update</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator</from>
+      <to>Catégorie Rentabilité</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Catégorie Rentabilité</from>
+      <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -598,7 +607,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>480</xloc>
+      <xloc>544</xloc>
       <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
@@ -978,7 +987,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
+      <xloc>880</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1026,7 +1035,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
+      <xloc>432</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1074,7 +1083,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>576</xloc>
+      <xloc>656</xloc>
       <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1122,7 +1131,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>688</xloc>
+      <xloc>768</xloc>
       <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1170,7 +1179,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
+      <xloc>320</xloc>
       <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1218,8 +1227,166 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>176</xloc>
+      <xloc>208</xloc>
       <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Insert / update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>fait_rentabilite</table>
+      <key>
+        <name>id_temps</name>
+        <field>id_temps</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_batiment</name>
+        <field>id_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_region</name>
+        <field>id_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_client</name>
+        <field>id_client</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_facture</name>
+        <field>id_facture</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_paiement</name>
+        <field>id_paiement</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_client</name>
+        <rename>id_client</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_facture</name>
+        <rename>id_facture</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_paiement</name>
+        <rename>id_paiement</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>montant_ht</name>
+        <rename>total_ht</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>montant_tva</name>
+        <rename>tva_amount</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>montant_ttc</name>
+        <rename>total_ttc</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>cout_energie</name>
+        <rename>energy_cost</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>montant_paye</name>
+        <rename>payment_amount</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>marge</name>
+        <rename>marge</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>taux_marge</name>
+        <rename>taux_marge</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>delai_paiement</name>
+        <rename>delai_paiement</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>taux_recouvrement</name>
+        <rename>taux_recouvrement</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>rentabilite_categorie</name>
+        <rename>rentabilite_categorie</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>source_id</name>
+        <rename>source_filename</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>date_extraction</name>
+        <rename>extraction_timestamp</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>352</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1303,6 +1470,10 @@
         <name>extraction_timestamp</name>
         <rename/>
       </field>
+      <field>
+        <name>rentabilite_categorie</name>
+        <rename/>
+      </field>
       <select_unspecified>N</select_unspecified>
     </fields>
     <attributes/>
@@ -1314,8 +1485,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>336</yloc>
+      <xloc>656</xloc>
+      <yloc>352</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1615,13 +1786,13 @@
     </remotesteps>
     <GUI>
       <xloc>48</xloc>
-      <yloc>288</yloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Insert / update</name>
-    <type>InsertUpdate</type>
+    <name>Catégorie Rentabilité</name>
+    <type>ScriptValueMod</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1630,134 +1801,45 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>greencity_dw</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>fait_rentabilite</table>
-      <key>
-        <name>id_temps</name>
-        <field>id_temps</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_batiment</name>
-        <field>id_batiment</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_region</name>
-        <field>id_region</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_client</name>
-        <field>id_client</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_facture</name>
-        <field>id_facture</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_paiement</name>
-        <field>id_paiement</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_temps</name>
-        <rename>id_temps</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_batiment</name>
-        <rename>id_batiment</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_region</name>
-        <rename>id_region</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_client</name>
-        <rename>id_client</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_facture</name>
-        <rename>id_facture</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_paiement</name>
-        <rename>id_paiement</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>montant_ht</name>
-        <rename>total_ht</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>montant_tva</name>
-        <rename>tva_amount</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>montant_ttc</name>
-        <rename>total_ttc</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>cout_energie</name>
-        <rename>energy_cost</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>montant_paye</name>
-        <rename>payment_amount</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>marge</name>
-        <rename>marge</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>taux_marge</name>
-        <rename>taux_marge</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>delai_paiement</name>
-        <rename>delai_paiement</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>taux_recouvrement</name>
-        <rename>taux_recouvrement</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>source_id</name>
-        <rename>source_filename</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>date_extraction</name>
-        <rename>extraction_timestamp</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>// Calculer rentabilite_categorie basée sur taux_marge
+if (taux_marge > 0.40) { // 40%
+    rentabilite_categorie = "Excellente";
+} else if (taux_marge > 0.20) { // 20%
+    rentabilite_categorie = "Bonne";
+} else if (taux_marge > 0.10) { // 10%
+    rentabilite_categorie = "Moyenne";
+} else if (taux_marge >= 0) { // 0%
+    rentabilite_categorie = "Faible";
+} else {
+    rentabilite_categorie = "Déficitaire"; // taux_marge négatif
+}
+
+// Transmettre toutes les autres variables
+var fields = getInputRowMeta().getFieldNames();
+for (var i = 0; i &lt; fields.length; i++) {
+    var field = fields[i];
+    if (field != "rentabilite_categorie") {
+        this[field] = this[field];
+    }
+}</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>rentabilite_categorie</name>
+        <rename>rentabilite_categorie</rename>
+        <type>String</type>
+        <length>20</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1767,8 +1849,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>592</xloc>
-      <yloc>336</yloc>
+      <xloc>880</xloc>
+      <yloc>352</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
