@@ -360,13 +360,2281 @@ Ces fichiers seront fusionnés en Transformation avec:
 
 
 
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  04_Transform_Consommation FLOW                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+DEUX SOURCES PARALLÈLES :
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ CSV file input (json stream)         │    │ CSV file input (sql stream)          │
+│ - Lit : staging_consommation_raw.csv │    │ - Lit : staging_consommation_mysql.csv│
+│ - 10 champs :                        │    │ - 15 champs :                         │
+│   • id_region, id_batiment           │    │   • reading_id, reading_date          │
+│   • type_energie, unite              │    │   • consumption_value, temperature    │
+│   • date_generation, compteur_id     │    │   • meter_code, meter_type            │
+│   • date_mesure, consommation_value  │    │   • meter_unit, building_code         │
+│   • source_filename                  │    │   • building_name, region_code        │
+│   • extraction_timestamp             │    │   • region_name, created_at           │
+│   • source_type                      │    │   • updated_at, extraction_timestamp  │
+│                                      │    │   • source_type, source_filename      │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Add fields                           │    │ remove field                         │
+│ - Étape Constante                    │    │ - Étape Sélection de valeurs         │
+│ - Ajoute 5 champs manquants :        │    │ - Supprime reading_id                │
+│   • temperature (BigNumber)          │    │ - Garde 14 autres champs             │
+│   • building_name (String)           │    │                                      │
+│   • region_name (String)             │    │                                      │
+│   • created_at (String)              │    │                                      │
+│   • updated_at (String)              │    │                                      │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ rename                               │    │ add field                            │
+│ - Étape Sélection de valeurs         │    │ - Étape Constante                    │
+│ - Renomme champs français→anglais :  │    │ - Ajoute date_generation             │
+│   • id_region → region_code          │    │                                      │
+│   • id_batiment → building_code      │    │                                      │
+│   • type_energie → meter_type        │    │                                      │
+│   • unite → meter_unit               │    │                                      │
+│   • compteur_id → meter_code         │    │                                      │
+│   • date_mesure → reading_date       │    │                                      │
+│   • consommation_value → consumption_value│                                      │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ REORDER                              │    │ REORDER2                             │
+│ - Étape Sélection de valeurs         │    │ - Étape Sélection de valeurs         │
+│ - Réordonne 16 champs :              │    │ - Réordonne 16 champs :              │
+│   1. region_code                     │    │   1. region_code                     │
+│   2. building_code                   │    │   2. building_code                   │
+│   3. meter_type                      │    │   3. meter_type                      │
+│   4. meter_code                      │    │   4. meter_code                      │
+│   5. meter_unit                      │    │   5. meter_unit                      │
+│   6. reading_date                    │    │   6. reading_date                    │
+│   7. consumption_value               │    │   7. consumption_value               │
+│   8. temperature                     │    │   8. temperature                     │
+│   9. building_name                   │    │   9. building_name                   │
+│   10. region_name                    │    │   10. region_name                    │
+│   11. source_type                    │    │   11. source_type                    │
+│   12. source_filename                │    │   12. source_filename                │
+│   13. extraction_timestamp           │    │   13. extraction_timestamp           │
+│   14. date_generation                │    │   14. date_generation                │
+│   15. created_at                     │    │   15. created_at                     │
+│   16. updated_at                     │    │   16. updated_at                     │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+                ┌─────────────────────────────────────────────┐
+                │          Append streams                     │
+                │ - Étape APPEND                              │
+                │ - Head : REORDER (json stream)              │
+                │ - Tail : REORDER2 (sql stream)              │
+                │ - Fusionne les deux sources                 │
+                └────────────────────────────────┬────────────┘
+                                                 │
+                                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    TRAITEMENT COMMUN                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Append streams
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ Filter rows                          │
+│ - Étape Filtre                       │
+│ - Vérifie champs obligatoires :      │
+│   • consumption_value IS NOT NULL    │
+│   • reading_date IS NOT NULL         │
+│   • building_code IS NOT NULL        │
+│ - true → trim                        │
+│ - false → rejet                      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ trim                                 │
+│ - Étape Opérations sur chaînes       │
+│ - Trim (both) sur 13 champs texte :  │
+│   • region_code, building_code       │
+│   • meter_type, meter_code           │
+│   • meter_unit, reading_date         │
+│   • building_name, region_name       │
+│   • source_type, source_filename     │
+│   • extraction_timestamp             │
+│   • date_generation                  │
+│   • created_at, updated_at           │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Replace in string                    │
+│ - Étape Remplacement                 │
+│ - Normalise valeurs :                │
+│   • electricity → electricite        │
+│   • gas → gaz                        │
+│   • water → eau                      │
+│   • KWh → kWh (standardisation)      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ fixing date                          │
+│ - Étape Remplacement                 │
+│ - Remplace "T" par espace dans       │
+│   reading_date (format ISO)          │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values                        │
+│ - Étape Sélection de valeurs         │
+│ - Convertit formats dates :          │
+│   • extraction_timestamp → yyyy/MM/dd HH:mm:ss.SSS│
+│   • date_generation → yyyy-MM-dd     │
+│   • created_at → yyyy/MM/dd HH:mm:ss │
+│   • updated_at → yyyy/MM/dd HH:mm:ss │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 7                      │
+│ - Étape Sélection de valeurs         │
+│ - Convertit formats dates :          │
+│   • extraction_timestamp → yyyy-MM-dd HH:mm:ss│
+│   • created_at → yyyy-MM-dd HH:mm:ss │
+│   • updated_at → yyyy-MM-dd HH:mm:ss │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                 ROUTAGE DES FORMATS DE DATE                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Select values 7
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ yyyy-MM-dd HH:mm:ss                 │
+│ - Étape Filtre avec REGEXP           │
+│ - Vérifie format : ^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$│
+│ - true → Select values 2 (format OK) │
+│ - false → dd/MM/yyyy HH:mm          │
+└───────────────┬──────────────────────┘
+      ┌─────────┴──────────┐
+      │                    │
+      ▼                    ▼
+┌──────────────────────┐  ┌──────────────────────────────────────┐
+│ Select values 2      │  │ dd/MM/yyyy HH:mm                    │
+│ - Convertit :        │  │ - Étape Filtre avec REGEXP           │
+│   • reading_date →   │  │ - Vérifie format : ^[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}$│
+│     yyyy-MM-dd       │  │ - true → Replace in string 2         │
+│                      │  │ - false → Format yyyy/MM/dd HH:mm:ss │
+└───────────────┬──────┘  └───────────────┬──────────────────────┘
+      │                    ┌───────────────┴──────────┐
+      │                    │                          │
+      ▼                    ▼                          ▼
+┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────────────────────┐
+│ Append streams 2     │  │ Replace in string 2  │  │ Format yyyy/MM/dd HH:mm:ss          │
+│ - Head :             │  │ - Extrait date       │  │ - Vérifie format : ^[0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}│
+│   Select values 2    │  │   (sans heure)       │  │ - true → Select values 4             │
+│ - Tail :             │  │ - Regex :            │  │ - false → rejet                     │
+│   Select values 5    │  │   ^(\d{2}/\d{2}/\d{4}).*$ → $1 │
+└───────────────┬──────┘  └───────────────┬──────┘  └───────────────┬──────────────────────┘
+      │                    │                                       │
+      │                    ▼                                       ▼
+      │          ┌──────────────────────┐              ┌──────────────────────────────────────┐
+      │          │ Select values 3      │              │ Select values 4                      │
+      │          │ - Convertit :        │              │ - Convertit :                        │
+      │          │   • reading_date →   │              │   • reading_date →                   │
+      │          │     dd/MM/yyyy       │              │     yyyy/MM/dd                       │
+      │          └───────────────┬──────┘              └───────────────┬──────────────────────┘
+      │                    │                                       │
+      │                    ▼                                       ▼
+      │          ┌──────────────────────┐              ┌──────────────────────────────────────┐
+      │          │ Select values 5      │              │ Select values 6                      │
+      │          │ - Convertit :        │              │ - Convertit :                        │
+      │          │   • reading_date →   │              │   • reading_date →                   │
+      │          │     yyyy-MM-dd       │              │     yyyy-MM-dd                       │
+      └──────────┴───────────────┬──────┘              └───────────────┬──────────────────────┘
+                                  │                                     │
+                                  ▼                                     ▼
+                                  ┌─────────────────────────────────────────┐
+                                  │          Append streams 3               │
+                                  │ - Head : Append streams 2               │
+                                  │ - Tail : Select values 6                │
+                                  │ - Fusionne tous les formats de date     │
+                                  └────────────────────────────────┬────────┘
+                                                                   │
+                                                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                          SORTIE FINALE                              │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Append streams 3
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ Text file output                     │
+│ - Écrit vers :                       │
+│   transformed_consommation.csv       │
+│ - Format : CSV avec entête           │
+│ - Encodage : UTF-8                   │
+│ - Séparateur : virgule               │
+│ - Guillemets : double quotes         │
+│ - 16 champs formatés                 │
+└──────────────────────────────────────┘
+
+FLUX DE TRAITEMENT :
+• Deux sources parallèles (JSON stream + SQL stream)
+• Harmonisation des noms de champs (français→anglais)
+• Ajout de champs manquants dans chaque flux
+• Réorganisation des champs pour alignement
+• Fusion des deux sources
+• Validation des champs obligatoires
+• Nettoyage des chaînes (trim)
+• Standardisation des valeurs (électricité→electricite, etc.)
+• Correction du format ISO (remplacement "T")
+• Conversion des dates metadata
+• Routage complexe pour 3 formats de date :
+  1. yyyy-MM-dd HH:mm:ss → yyyy-MM-dd
+  2. dd/MM/yyyy HH:mm → yyyy-MM-dd
+  3. yyyy/MM/dd HH:mm:ss → yyyy-MM-dd
+• Fusion finale des flux de dates
+• Sortie CSV unique
+
+CHAMPS FINAUX (16) :
+1. region_code          9. building_name
+2. building_code       10. region_name
+3. meter_type          11. source_type
+4. meter_code          12. source_filename
+5. meter_unit          13. extraction_timestamp
+6. reading_date        14. date_generation
+7. consumption_value   15. created_at
+8. temperature         16. updated_at
+
+FORMATS DE DATE ACCEPTÉS :
+1. yyyy-MM-dd HH:mm:ss      (ex: 2024-01-15 14:30:00)
+2. dd/MM/yyyy HH:mm         (ex: 15/01/2024 14:30)
+3. yyyy/MM/dd HH:mm:ss      (ex: 2024/01/15 14:30:00)
+4. yyyy-MM-dd'T'HH:mm:ss    (ex: 2024-01-15T14:30:00)
+
+STANDARDISATION :
+• Types énergie : electricity→electricite, gas→gaz, water→eau
+• Unité : KWh→kWh (miniscule)
+• Noms régions/bâtiments : trim des espaces
+• Toutes les dates → format final yyyy-MM-dd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  05_Transform_Rentabilite FLOW                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+SOURCE UNIQUE (Facturation MySQL) :
+┌──────────────────────────────────────┐
+│ CSV file input                       │
+│ - Lit : staging_rentabilite_mysql.csv│
+│ - 23 champs de facturation :         │
+│   1. invoice_id (Integer)            │
+│   2. invoice_number (String)         │
+│   3. invoice_date (String)           │
+│   4. due_date (String)               │
+│   5. total_ht (BigNumber)            │
+│   6. tva_amount (BigNumber)          │
+│   7. total_ttc (BigNumber)           │
+│   8. energy_cost (BigNumber)         │
+│   9. status (String)                 │
+│   10. client_code (String)           │
+│   11. client_name (String)           │
+│   12. sector (String)                │
+│   13. building_code (String)         │
+│   14. building_name (String)         │
+│   15. region_code (String)           │
+│   16. payment_date (String)          │
+│   17. payment_amount (BigNumber)     │
+│   18. payment_method (String)        │
+│   19. created_at (String)            │
+│   20. updated_at (String)            │
+│   21. extraction_timestamp (String)  │
+│   22. source_type (String)           │
+│   23. source_filename (String)       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 2 2                    │
+│ - Étape Sélection de valeurs         │
+│ - Sélectionne tous les 23 champs     │
+│ - Les champs sont déjà en anglais    │
+│ - Pas de transformation              │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Replace in string                    │
+│ - Étape Remplacement                 │
+│ - Traduit payment_method :           │
+│   • check → Chèque                   │
+│   • card → Carte Bancaire            │
+│   • bank_transfer → Virement Bancaire│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ If field value is null               │
+│ - Étape Si valeur nulle              │
+│ - Si payment_method est null →       │
+│   Remplacer par "Non Payé"           │
+│ - Gère les paiements manquants       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ trim                                 │
+│ - Étape Opérations sur chaînes       │
+│ - Trim (both) sur 11 champs texte :  │
+│   • invoice_number, status           │
+│   • client_code, client_name, sector │
+│   • building_code, building_name     │
+│   • region_code, payment_method      │
+│   • source_type, source_filename     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Filter rows 3                        │
+│ - Étape Filtre avec REGEXP           │
+│ - Vérifie 3 codes simultanément :    │
+│   • region_code = ^REG[0-9]{2}$      │
+│   • building_code = ^BAT[0-9]{3}$    │
+│   • client_code = ^CLI[0-9]{3}$      │
+│ - true → Append streams 2            │
+│   (tous les codes sont valides)      │
+│ - false → Modified JavaScript value 2 │
+│   (au moins un code invalide)        │
+└───────────────┬──────────────────────┘
+      ┌─────────┼─────────┐
+      │         │         │
+      ▼         ▼         │
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Append streams 2                     │    │ Modified JavaScript value 2          │
+│ - Étape APPEND                       │    │ - Étape JavaScript Modifié           │
+│ - Head : Filter rows 3 (codes OK)    │    │ - Pour données avec codes invalides :│
+│ - Tail : Select values 3 (corrigées) │    │   • Si region_code invalide OU       │
+│                                      │    │     région > 12 OU région = 0 →      │
+│                                      │    │     "NON_RENSEIGNE"                  │
+│                                      │    │   • Si building_code invalide OU     │
+│                                      │    │     bâtiment > 500 →                 │
+│                                      │    │     "NON_RENSEIGNE"                  │
+│                                      │    │   • Si client_code invalide OU       │
+│                                      │    │     client > 999 OU client = 0 →     │
+│                                      │    │     "NON_RENSEIGNE"                  │
+│                                      │    │ - Crée champs clean :               │
+│                                      │    │   • region_clean                     │
+│                                      │    │   • building_clean                   │
+│                                      │    │   • client_clean                     │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Fix Date Format with REGEXP          │    │ Calculator_Unifier                   │
+│ - Étape Remplacement (Regex)         │    │ - Étape Calculatrice                 │
+│ - Transforme dd/MM/yyyy → yyyy-MM-dd │    │ - Unifie avec NVL :                  │
+│   pour 6 champs dates :              │    │   • region_code1 = NVL(region_code,  │
+│   • invoice_date                     │    │      region_clean)                   │
+│   • due_date                         │    │   • building_code1 = NVL(building_code,│
+│   • payment_date                     │    │      building_clean)                 │
+│   • created_at                       │    │   • client_code1 = NVL(client_code,  │
+│   • updated_at                       │    │      client_clean)                   │
+│   • extraction_timestamp             │    │ - Garde les deux versions           │
+│ - Regex : ^(\d{1,2})/(\d{1,2})/(\d{4})$│  └───────────────┬──────────────────────┘
+│   → $3-$1-$2                         │                    │
+└───────────────┬──────────────────────┘                    ▼
+                │                              ┌──────────────────────────────────────┐
+                ▼                              │ Select values                        │
+┌──────────────────────────────────────┐      │ - Étape Sélection de valeurs         │
+│ Replace in string 2                  │      │ - Supprime anciens champs :          │
+│ - Étape Remplacement (Regex)         │      │   • region_code                      │
+│ - Extrait partie date                │      │   • building_code                    │
+│   (supprime partie heure)            │      │   • region_clean                     │
+│   pour 6 champs dates :              │      │   • building_clean                   │
+│   • invoice_date                     │      │   • client_code                      │
+│   • due_date                         │      │   • client_clean                     │
+│   • payment_date                     │      │ - Garde champs unifiés :            │
+│   • created_at                       │      │   • region_code1                     │
+│   • updated_at                       │      │   • building_code1                   │
+│   • extraction_timestamp             │      │   • client_code1                     │
+│ - Regex : ^(\d{4}/\d{2}/\d{2}).*$    │      └───────────────┬──────────────────────┘
+│   → $1                               │                      │
+└───────────────┬──────────────────────┘                      ▼
+                │                              ┌──────────────────────────────────────┐
+                ▼                              │ Select values 3                      │
+┌──────────────────────────────────────┐      │ - Étape Sélection de valeurs         │
+│ Select values 2                      │      │ - Renomme champs unifiés :           │
+│ - Étape Conversion de type           │      │   • region_code1 → region_code       │
+│ - Convertit 6 champs String → Date   │      │   • building_code1 → building_code   │
+│   avec format yyyy/MM/dd :           │      │   • client_code1 → client_code       │
+│   • invoice_date                     │      │ - Garde les autres champs inchangés  │
+│   • due_date                         │      │ - Préparé pour Append streams 2      │
+│   • payment_date                     │      └──────────────────────────────────────┘
+│   • created_at                       │
+│   • updated_at                       │
+│   • extraction_timestamp             │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 4                      │
+│ - Étape Conversion de type           │
+│ - Convertit 6 champs Date → Date     │
+│   avec format yyyy-MM-dd :           │
+│   • invoice_date                     │
+│   • due_date                         │
+│   • payment_date                     │
+│   • created_at                       │
+│   • updated_at                       │
+│   • extraction_timestamp             │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ String operations                    │
+│ - Étape Opérations sur chaînes       │
+│ - Trim (both) sur 11 champs texte :  │
+│   • invoice_number, status           │
+│   • client_code, client_name, sector │
+│   • building_code, building_name     │
+│   • region_code, payment_method      │
+│   • source_type, source_filename     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 5                      │
+│ - Étape Conversion finale            │
+│ - Convertit 6 champs Date → String   │
+│   avec format yyyy-MM-dd :           │
+│   • invoice_date                     │
+│   • due_date                         │
+│   • payment_date                     │
+│   • created_at                       │
+│   • updated_at                       │
+│   • extraction_timestamp             │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Text file output                     │
+│ - Écrit vers :                       │
+│   transformed_rentabilite.csv        │
+│ - Format : CSV avec entête           │
+│ - Encodage : UTF-8                   │
+│ - Séparateur : virgule               │
+│ - Guillemets : double quotes         │
+│ - 23 champs formatés                 │
+└──────────────────────────────────────┘
+
+FLUX DE TRAITEMENT :
+• Source unique MySQL (pas de fusion JSON/SQL)
+• Traduction des méthodes de paiement (anglais→français)
+• Gestion des paiements manquants → "Non Payé"
+• Nettoyage des chaînes (trim)
+• Validation des 3 codes : région, bâtiment, client
+• Deux chemins :
+  1. Données valides → directement en sortie
+  2. Données non conformes → correction → unification → sortie
+• Traitement des dates en 3 étapes :
+  1. Format dd/MM/yyyy → yyyy-MM-dd
+  2. Extraction date (suppression heure)
+  3. Conversion String → Date → String format final
+• Sortie CSV final unifié
+
+CHAMPS FINAUX (23) :
+1. invoice_id            12. sector
+2. invoice_number        13. building_code
+3. invoice_date          14. building_name
+4. due_date              15. region_code
+5. total_ht              16. payment_date
+6. tva_amount            17. payment_amount
+7. total_ttc             18. payment_method
+8. energy_cost           19. created_at
+9. status                20. updated_at
+10. client_code          21. extraction_timestamp
+11. client_name          22. source_type
+                         23. source_filename
+
+VALIDATIONS DES CODES :
+• REG[0-9]{2} pour région (ex: REG01)
+   - Numéro entre 01 et 12
+   - Non nul (≠ 00)
+• BAT[0-9]{3} pour bâtiment (ex: BAT001)
+   - Numéro ≤ 500
+• CLI[0-9]{3} pour client (ex: CLI001)
+   - Numéro entre 001 et 999
+   - Non nul (≠ 000)
+
+VALEURS PAR DÉFAUT :
+• payment_method null → "Non Payé"
+• Codes invalides → "NON_RENSEIGNE"
+
+FORMATS DE DATE TRAITÉS :
+• Entrée : dd/MM/yyyy (ex: 15/01/2024)
+• Sortie : yyyy-MM-dd (ex: 2024-01-15)
+
+MÉTHODES DE PAIEMENT TRADUITES :
+• check → Chèque
+• card → Carte Bancaire
+• bank_transfer → Virement Bancaire
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  06_Transform_Environnement FLOW                        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+DEUX SOURCES PARALLÈLES (Environnement) :
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ CSV file input (Raw)                 │    │ CSV file input 2 (MySQL)             │
+│ - Lit : staging_environnement_raw.csv│    │ - Lit : staging_environnement_mysql.csv│
+│ - 8 champs :                         │    │ - 10 champs :                         │
+│   • id_region (String)               │    │   • report_id (Integer)              │
+│   • id_batiment (String)             │    │   • report_date (String)             │
+│   • date_rapport (String)            │    │   • emission_co2_kg (String)         │
+│   • emission_CO2_kg (String)         │    │   • recycling_rate (String)          │
+│   • taux_recyclage (String)          │    │   • region_code (String)             │
+│   • source_filename (String)         │    │   • building_code (String)           │
+│   • extraction_timestamp (String)    │    │   • created_at (String)              │
+│   • source_type (String)             │    │   • extraction_timestamp (String)    │
+│                                      │    │   • source_type (String)             │
+│                                      │    │   • source_filename (String)         │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Add constants                        │    │ Add constants 2                      │
+│ - Étape Constante                    │    │ - Étape Constante                    │
+│ - Ajoute 2 champs manquants :        │    │ - Ajoute 1 champ manquant :          │
+│   • created_at (String)              │    │   • updated_at (String)              │
+│   • updated_at (String)              │    │                                      │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Select values 5                      │    │ Select values 4                      │
+│ - Étape Sélection de valeurs         │    │ - Étape Sélection de valeurs         │
+│ - Renomme champs français→anglais :  │    │ - Supprime report_id                 │
+│   • id_region → region_code          │    │ - Garde 9 autres champs              │
+│   • id_batiment → building_code      │    │                                      │
+│   • date_rapport → report_date       │    │                                      │
+│   • emission_CO2_kg → emission_co2_kg│    │                                      │
+│   • taux_recyclage → recycling_rate  │    │                                      │
+│                                      │    │                                      │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ reorder                              │    │ reorder2                             │
+│ - Étape Sélection de valeurs         │    │ - Étape Sélection de valeurs         │
+│ - Réordonne 10 champs :              │    │ - Réordonne 10 champs :              │
+│   1. region_code                     │    │   1. region_code                     │
+│   2. report_date                     │    │   2. report_date                     │
+│   3. building_code                   │    │   3. building_code                   │
+│   4. emission_co2_kg                 │    │   4. emission_co2_kg                 │
+│   5. recycling_rate                  │    │   5. recycling_rate                  │
+│   6. extraction_timestamp            │    │   6. extraction_timestamp            │
+│   7. source_filename                 │    │   7. source_filename                 │
+│   8. source_type                     │    │   8. source_type                     │
+│   9. created_at                      │    │   9. created_at                      │
+│   10. updated_at                     │    │   10. updated_at                     │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+                ┌─────────────────────────────────────────────┐
+                │          Append streams                     │
+                │ - Étape APPEND                              │
+                │ - Head : reorder (raw stream)               │
+                │ - Tail : reorder2 (mysql stream)            │
+                │ - Fusionne les deux sources                 │
+                └────────────────────────────────┬────────────┘
+                                                 │
+                                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    TRAITEMENT COMMUN                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Append streams
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ trim                                 │
+│ - Étape Opérations sur chaînes       │
+│ - Trim (both) sur 10 champs texte :  │
+│   • region_code, report_date         │
+│   • building_code, emission_co2_kg   │
+│   • recycling_rate                   │
+│   • extraction_timestamp             │
+│   • source_filename, source_type     │
+│   • created_at, updated_at           │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Filter rows 3                        │
+│ - Étape Filtre avec REGEXP           │
+│ - Vérifie 2 codes simultanément :    │
+│   • region_code = ^REG(0[1-9]|1[0-2])$│
+│     (région 01-12 uniquement)        │
+│   • building_code = ^BAT[0-9]{3}$    │
+│ - true → Append streams 2            │
+│   (tous les codes sont valides)      │
+│ - false → Modified JavaScript value 2 │
+│   (au moins un code invalide)        │
+└───────────────┬──────────────────────┘
+      ┌─────────┼─────────┐
+      │         │         │
+      ▼         ▼         │
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Append streams 2                     │    │ Modified JavaScript value 2          │
+│ - Étape APPEND                       │    │ - Étape JavaScript Modifié           │
+│ - Head : Filter rows 3 (codes OK)    │    │ - Pour données avec codes invalides :│
+│ - Tail : Select values 2 (corrigées) │    │   • Si region_code invalide OU       │
+│ - Fusionne données valides et        │    │     région > 12 OU région = 0 →      │
+│   corrigées                          │    │     "NON_RENSEIGNE"                  │
+│                                      │    │   • Si building_code invalide OU     │
+│                                      │    │     bâtiment > 500 →                 │
+│                                      │    │     "NON_RENSEIGNE"                  │
+│                                      │    │ - Crée champs clean :               │
+│                                      │    │   • region_clean                     │
+│                                      │    │   • building_clean                   │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Select values 7                      │    │ Select values                        │
+│ - Étape Conversion de type           │    │ - Étape Sélection de valeurs         │
+│ - Convertit 3 champs String → Date   │    │ - Supprime anciens champs :          │
+│   avec format yyyy-MM-dd :           │    │   • region_code                      │
+│   • extraction_timestamp             │    │   • building_code                    │
+│   • created_at                       │    │   • region_clean, building_clean     │
+│   • updated_at                       │    │ - Garde autres champs               │
+└───────────────┬──────────────────────┘    └───────────────┬──────────────────────┘
+                │                                          │
+                ▼                                          ▼
+┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│ Append streams 2                     │    │ Select values 2                      │
+│ - Étape APPEND                       │    │ - Étape Sélection de valeurs         │
+│ - Head : Filter rows 3 (codes OK)    │    │ - Renomme champs clean :            │
+│ - Tail : Select values 2 (corrigées) │    │   • region_clean → region_code      │
+│ - Fusionne données valides et        │    │   • building_clean → building_code  │
+│   corrigées                          │    │ - Garde autres champs               │
+└───────────────┬──────────────────────┘    └──────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Filter rows                          │
+│ - Étape Filtre avec REGEXP           │
+│ - Vérifie formats numériques :       │
+│   • emission_co2_kg = ^[0-9]+(\.[0-9]+)?$│
+│   • recycling_rate = ^[0-9]+(\.[0-9]+)?$│
+│ - true → Select values 3 (formats OK)│
+│ - false → Dummy (données rejetées)   │
+└───────────────┬──────────────────────┘
+      ┌─────────┴──────────┐
+      │                    │
+      ▼                    ▼
+┌──────────────────────┐  ┌──────────────────────────────────────┐
+│ Select values 3      │  │ Dummy                               │
+│ - Convertit types :  │  │ - Étape Dummy (données rejetées)    │
+│   • emission_co2_kg →│  │                                      │
+│     BigNumber(#.##)  │  │                                      │
+│   • recycling_rate → │  │                                      │
+│     BigNumber(#.###) │  │                                      │
+└───────────────┬──────┘  └──────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Add constants 3 2                    │
+│ - Étape Constante                    │
+│ - Ajoute constante = 100             │
+│   (pour conversion pourcentage)      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator 2                         │
+│ - Étape Calculatrice                 │
+│ - Calcule :                          │
+│   • recycling_rate_percent =         │
+│     recycling_rate * 100             │
+│   (convertit décimal → pourcentage)  │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Filter rows 2                        │
+│ - Étape Filtre de plage              │
+│ - Vérifie plages valides :           │
+│   • emission_co2_kg ≥ 0 et ≤ 10000   │
+│   • recycling_rate ≥ 0 et ≤ 1        │
+│ - true → Replace in string           │
+│ - false → rejet                      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Replace in string                    │
+│ - Étape Remplacement (Regex)         │
+│ - Extrait partie date                │
+│   (supprime partie heure)            │
+│   pour 3 champs dates :              │
+│   • extraction_timestamp             │
+│   • created_at                       │
+│   • updated_at                       │
+│ - Regex : ^(\d{4}/\d{2}/\d{2}).*$    │
+│   → $1                               │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 6                      │
+│ - Étape Conversion de type           │
+│ - Convertit 3 champs String → Date   │
+│   avec format yyyy/MM/dd :           │
+│   • extraction_timestamp             │
+│   • created_at                       │
+│   • updated_at                       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 7                      │
+│ - Étape Conversion de type           │
+│ - Convertit 3 champs Date → Date     │
+│   avec format yyyy-MM-dd :           │
+│   • extraction_timestamp             │
+│   • created_at                       │
+│   • updated_at                       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Filter rows 4                        │
+│ - Étape Filtre avec REGEXP           │
+│ - Vérifie format report_date :       │
+│   • yyyy-MM-dd                       │
+│ - true → Select values 12            │
+│   (format direct yyyy-MM-dd)         │
+│ - false → Filter rows 5              │
+│   (autre format)                     │
+└───────────────┬──────────────────────┘
+      ┌─────────┴──────────┐
+      │                    │
+      ▼                    ▼
+┌──────────────────────┐  ┌──────────────────────────────────────┐
+│ Select values 12     │  │ Filter rows 5                       │
+│ - Convertit :        │  │ - Vérifie format report_date :      │
+│   • report_date →    │  │   • yyyy/MM/dd                      │
+│     Date(yyyy-MM-dd) │  │ - true → Select values 8            │
+└───────────────┬──────┘  └───────────────┬──────────────────────┘
+                │                         │
+                │                         ▼
+                │               ┌──────────────────────────────────────┐
+                │               │ Select values 8                      │
+                │               │ - Convertit :                        │
+                │               │   • report_date →                    │
+                │               │     Date(yyyy/MM/dd)                 │
+                │               └───────────────┬──────────────────────┘
+                │                               │
+                │                               ▼
+                │                     ┌──────────────────────────────────────┐
+                │                     │ Select values 10                     │
+                │                     │ - Convertit :                        │
+                │                     │   • report_date →                    │
+                │                     │     Date(yyyy-MM-dd)                 │
+                │                     └───────────────┬──────────────────────┘
+                │                         ┌───────────┴──────────┐
+                │                         │                     │
+                │                         ▼                     ▼
+                │               ┌──────────────────────────────────────┐
+                │               │ Append streams 3                     │
+                │               │ - Head : Select values 12            │
+                │               │ - Tail : Select values 10            │
+                │               │ - Fusionne 2 formats de date        │
+                │               └───────────────┬──────────────────────┘
+                │                               │
+                ▼                               ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                 TRAITEMENT ALTERNATIF DES DATES                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Filter rows 5
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ Filter rows 6                        │
+│ - Vérifie format report_date :       │
+│   • yyyy/MM/dd HH:mm:ss.SSS         │
+│   (avec millisecondes)               │
+│ - true → Replace in string 2         │
+│ - false → rejet                      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Replace in string 2                  │
+│ - Extrait partie date                │
+│   (supprime heure/millisecondes)     │
+│   pour report_date :                 │
+│ - Regex : ^(\d{4}/\d{2}/\d{2}).*$    │
+│   → $1                               │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 9                      │
+│ - Convertit :                        │
+│   • report_date →                    │
+│     Date(yyyy/MM/dd)                 │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 11                     │
+│ - Convertit :                        │
+│   • report_date →                    │
+│     Date(yyyy-MM-dd)                 │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+                ┌─────────────────────────────────────────────┐
+                │          Append streams 4                   │
+                │ - Head : Append streams 3                   │
+                │ - Tail : Select values 11                   │
+                │ - Fusionne tous les formats de date        │
+                └────────────────────────────────┬────────────┘
+                                                 │
+                                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                  CALCUL FINAL ET SORTIE                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+                Append streams 4
+                    │
+                    ▼
+┌──────────────────────────────────────┐
+│ Add constants 4                      │
+│ - Étape Constante                    │
+│ - Ajoute constante = 100             │
+│   (pour conversion pourcentage)      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator 3                         │
+│ - Étape Calculatrice                 │
+│ - Calcule :                          │
+│   • recycling_rate_percent =         │
+│     recycling_rate * 100             │
+│   (pour toutes les données fusionnées)│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 13                     │
+│ - Étape Sélection finale             │
+│ - Réordonne 11 champs pour sortie :  │
+│   1. region_code                     │
+│   2. report_date                     │
+│   3. building_code                   │
+│   4. emission_co2_kg                 │
+│   5. recycling_rate                  │
+│   6. recycling_rate_percent          │
+│   7. extraction_timestamp            │
+│   8. source_filename                 │
+│   9. source_type                     │
+│   10. created_at                     │
+│   11. updated_at                     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Text file output                     │
+│ - Écrit vers :                       │
+│   transformed_environnement.csv      │
+│ - Format : CSV avec entête           │
+│ - Encodage : UTF-8                   │
+│ - Séparateur : virgule               │
+│ - Guillemets : double quotes         │
+│ - 11 champs formatés                 │
+└──────────────────────────────────────┘
+
+FLUX DE TRAITEMENT :
+• Deux sources parallèles (Raw + MySQL)
+• Ajout de champs manquants dans chaque flux
+• Renommage français→anglais pour le flux Raw
+• Réorganisation des champs pour alignement
+• Fusion des deux sources
+• Nettoyage des chaînes (trim)
+• Validation des 2 codes : région (01-12), bâtiment (001-500)
+• Deux chemins :
+  1. Données valides → directement en traitement
+  2. Données non conformes → correction → unification
+• Validation des formats numériques (regex)
+• Conversion des types (String → BigNumber)
+• Calcul du pourcentage de recyclage (×100)
+• Validation des plages :
+  - CO2 : 0 à 10000 kg
+  - Taux recyclage : 0 à 1 (0-100%)
+• Traitement des dates metadata
+• Routage complexe pour 3 formats de report_date :
+  1. yyyy-MM-dd → conversion directe
+  2. yyyy/MM/dd → conversion intermédiaire
+  3. yyyy/MM/dd HH:mm:ss.SSS → extraction date → conversion
+• Calcul final du pourcentage pour toutes données
+• Sortie CSV avec 11 champs
+
+CHAMPS FINAUX (11) :
+1. region_code                7. extraction_timestamp
+2. report_date                8. source_filename
+3. building_code              9. source_type
+4. emission_co2_kg           10. created_at
+5. recycling_rate            11. updated_at
+6. recycling_rate_percent
+
+VALIDATIONS DES CODES :
+• REG(0[1-9]|1[0-2]) pour région (ex: REG01 à REG12)
+   - Numéro entre 01 et 12 uniquement
+• BAT[0-9]{3} pour bâtiment (ex: BAT001)
+   - Numéro ≤ 500
+
+VALIDATIONS DES VALEURS :
+• emission_co2_kg :
+  - Format numérique : ^[0-9]+(\.[0-9]+)?$
+  - Plage : 0 à 10000 kg
+• recycling_rate :
+  - Format numérique : ^[0-9]+(\.[0-9]+)?$
+  - Plage : 0 à 1 (0-100%)
+  - Calcul : recycling_rate_percent = recycling_rate × 100
+
+FORMATS DE DATE ACCEPTÉS (report_date) :
+1. yyyy-MM-dd                 (ex: 2024-01-15)
+2. yyyy/MM/dd                 (ex: 2024/01/15)
+3. yyyy/MM/dd HH:mm:ss.SSS    (ex: 2024/01/15 14:30:00.123)
+
+FORMATS DE DATE FINAUX :
+• report_date → yyyy-MM-dd
+• extraction_timestamp → yyyy-MM-dd
+• created_at → yyyy-MM-dd
+• updated_at → yyyy-MM-dd
+
+TRANSFORMATIONS :
+• Raw → MySQL : id_region → region_code, id_batiment → building_code, etc.
+• Taux recyclage décimal → pourcentage (×100)
+• Valeurs non conformes → "NON_RENSEIGNE"
+• Trim de tous les champs texte
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  07_Load_DM_Consommation FLOW                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+CONNEXION BASE DE DONNÉES :
+┌──────────────────────────────────────┐
+│ Connexion MySQL : greencity_dw       │
+│ - Serveur : localhost                │
+│ - Port : 3306                        │
+│ - Base : greencity_dw                │
+│ - Utilisateur : root                 │
+│ - Mot de passe : ******              │
+└──────────────────────────────────────┘
+
+SOURCE DE DONNÉES TRANSFORMÉES :
+┌──────────────────────────────────────┐
+│ Input_Consommation                   │
+│ - Type : CSV File Input              │
+│ - Fichier : transformed_consommation.csv│
+│ - 16 champs transformés :            │
+│   1. region_code (String)            │
+│   2. building_code (String)          │
+│   3. meter_type (String)             │
+│   4. meter_code (String)             │
+│   5. meter_unit (String)             │
+│   6. reading_date (Date:yyyy-MM-dd)  │
+│   7. consumption_value (BigNumber)   │
+│   8. temperature (BigNumber)         │
+│   9. building_name (String)          │
+│   10. region_name (String)           │
+│   11. source_type (String)           │
+│   12. source_filename (String)       │
+│   13. extraction_timestamp (Date)    │
+│   14. date_generation (Date)         │
+│   15. created_at (Date)              │
+│   16. updated_at (Date)              │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_TEMPS          │
+│ - Type : Database Lookup             │
+│ - Table : dim_temps                  │
+│ - Clé : reading_date → date_complete │
+│ - Retourne : id_temps (Integer)      │
+│ - Cherche la dimension temps         │
+│   correspondant à la date de lecture │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_REGION         │
+│ - Type : Database Lookup             │
+│ - Table : dim_region                 │
+│ - Clé : region_code → code_region    │
+│ - Retourne : id_region (Integer)     │
+│ - Cherche la dimension région        │
+│   correspondant au code région       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_BATIMENT       │
+│ - Type : Database Lookup             │
+│ - Table : dim_batiment               │
+│ - Clé : building_code → code_batiment│
+│ - Retourne : id_batiment (Integer)   │
+│ - Cherche la dimension bâtiment      │
+│   correspondant au code bâtiment     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ String operations                    │
+│ - Type : String Operations           │
+│ - Trim (both) sur 2 champs :         │
+│   • meter_type                       │
+│   • meter_code                       │
+│ - Nettoie avant lookup suivant       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_ENERGIE        │
+│ - Type : Database Lookup             │
+│ - Table : dim_energie                │
+│ - Clé : meter_type → type_energie    │
+│ - Retourne :                         │
+│   • id_energie (Integer)             │
+│   • tarif_unitaire (Number)          │
+│ - Cherche la dimension énergie       │
+│   + récupère le tarif unitaire       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator                           │
+│ - Type : Calculator                  │
+│ - Calcule :                          │
+│   • cout_energie_calcule =           │
+│     consumption_value × tarif_unitaire│
+│ - Calcule le coût énergétique        │
+│   basé sur la consommation et le     │
+│   tarif unitaire                     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_COMPTEUR       │
+│ - Type : Database Lookup             │
+│ - Table : dim_compteur               │
+│ - Clé : meter_code → code_compteur   │
+│ - Retourne : id_compteur (Integer)   │
+│ - Cherche la dimension compteur      │
+│   correspondant au code compteur     │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values                        │
+│ - Type : Select Values               │
+│ - Sélectionne 12 champs pour la      │
+│   table de fait :                    │
+│   1. consumption_value               │
+│   2. temperature                     │
+│   3. source_filename                 │
+│   4. extraction_timestamp            │
+│   5. created_at                      │
+│   6. updated_at                      │
+│   7. id_temps                        │
+│   8. id_region                       │
+│   9. id_batiment                     │
+│   10. id_energie                     │
+│   11. cout_energie_calcule           │
+│   12. id_compteur                    │
+│ - Prépare les champs pour l'insertion│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Add constants                        │
+│ - Type : Constant                    │
+│ - Ajoute : id_client = ???           │
+│   (valeur constante non spécifiée)   │
+│ - Complète avec champ client manquant│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Upsert_FAIT_CONSOMMATION             │
+│ - Type : Insert Update               │
+│ - Table : fait_consommation          │
+│ - Stratégie : Insert/Update          │
+│   (UPSERT sur clés composites)       │
+│ - Clés de lookup (4) :               │
+│   1. id_temps                        │
+│   2. id_batiment                     │
+│   3. id_compteur                     │
+│   4. id_energie                      │
+│ - Champs insérés/mis à jour (11) :   │
+│   1. id_temps                        │
+│   2. id_batiment                     │
+│   3. id_region                       │
+│   4. id_client                       │
+│   5. id_energie                      │
+│   6. id_compteur                     │
+│   7. consommation_valeur             │
+│   8. temperature                     │
+│   9. cout_energie                    │
+│   10. source_id                      │
+│   11. date_extraction                │
+│ - Commit toutes les 100 lignes       │
+└──────────────────────────────────────┘
+
+FLUX DE CHARGEMENT DIMENSIONNEL :
+• Lecture des données transformées (CSV)
+• Séquence de 5 lookups dimensionnels :
+  1. DIM_TEMPS : Date de lecture → ID temps
+  2. DIM_REGION : Code région → ID région
+  3. DIM_BATIMENT : Code bâtiment → ID bâtiment
+  4. DIM_ENERGIE : Type énergie → ID énergie + tarif
+  5. DIM_COMPTEUR : Code compteur → ID compteur
+• Calcul du coût énergétique (consommation × tarif)
+• Préparation des champs de fait
+• Ajout du client (valeur constante)
+• Insertion/Update dans la table de fait
+
+MAPPING DES TABLES DIMENSIONNELLES :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Source → Table Dimension → Champ Clé → Champ Retour                │
+├─────────────────────────────────────────────────────────────────────┤
+│ reading_date → dim_temps → date_complete → id_temps               │
+│ region_code → dim_region → code_region → id_region                │
+│ building_code → dim_batiment → code_batiment → id_batiment        │
+│ meter_type → dim_energie → type_energie → id_energie + tarif_unitaire│
+│ meter_code → dim_compteur → code_compteur → id_compteur           │
+└─────────────────────────────────────────────────────────────────────┘
+
+MAPPING TABLE DE FAIT :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Champ Source → Champ Table Fait → Type                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ consumption_value → consommation_valeur → Mesure                   │
+│ temperature → temperature → Mesure                                 │
+│ cout_energie_calcule → cout_energie → Mesure (calculée)           │
+│ source_filename → source_id → Métadata                             │
+│ extraction_timestamp → date_extraction → Métadata                  │
+│ id_temps → id_temps → Clé étrangère                               │
+│ id_region → id_region → Clé étrangère                             │
+│ id_batiment → id_batiment → Clé étrangère                         │
+│ id_energie → id_energie → Clé étrangère                           │
+│ id_compteur → id_compteur → Clé étrangère                         │
+│ (constant) → id_client → Clé étrangère (constante)                │
+└─────────────────────────────────────────────────────────────────────┘
+
+STRATÉGIE D'INSERTION :
+• Type : Insert Update (UPSERT)
+• Clés composites : (id_temps, id_batiment, id_compteur, id_energie)
+• Si existe : Mise à jour des mesures
+• Si n'existe pas : Insertion nouvelle ligne
+• Commit batch : 100 lignes
+
+TRANSFORMATIONS APPLIQUÉES :
+1. Nettoyage des chaînes avant lookup (trim)
+2. Calcul coût énergétique : consommation × tarif unitaire
+3. Conversion codes → IDs via lookups dimensionnels
+4. Ajout champ client constant
+
+CHAMPS IGNORÉS DANS LE FAIT :
+• building_name, region_name (déjà dans dimensions)
+• source_type, date_generation, created_at, updated_at
+• meter_unit (non utilisé dans le fait)
+
+VALIDATIONS IMPLICITES :
+• Tous les lookups doivent réussir (pas de valeur par défaut)
+• Les dimensions doivent être pré-chargées
+• Format des dates doit correspondre aux dimensions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  08_Load_DM_Rentabilite FLOW                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+CONNEXION BASE DE DONNÉES :
+┌──────────────────────────────────────┐
+│ Connexion MySQL : greencity_dw       │
+│ - Serveur : localhost                │
+│ - Port : 3306                        │
+│ - Base : greencity_dw                │
+│ - Utilisateur : root                 │
+│ - Optimisations :                    │
+│   • Streaming activé                 │
+│   • Fetch size : 500                 │
+│   • Cursor fetch activé              │
+└──────────────────────────────────────┘
+
+SOURCE DE DONNÉES TRANSFORMÉES :
+┌──────────────────────────────────────┐
+│ CSV file input                       │
+│ - Type : CSV File Input              │
+│ - Fichier : transformed_rentabilite.csv│
+│ - 23 champs transformés :            │
+│   1. invoice_id (Integer)            │
+│   2. invoice_number (String)         │
+│   3. invoice_date (String:yyyy-MM-dd)│
+│   4. due_date (String:yyyy-MM-dd)    │
+│   5. total_ht (BigNumber)            │
+│   6. tva_amount (BigNumber)          │
+│   7. total_ttc (BigNumber)           │
+│   8. energy_cost (BigNumber)         │
+│   9. status (String)                 │
+│   10. client_code (String)           │
+│   11. client_name (String)           │
+│   12. sector (String)                │
+│   13. building_code (String)         │
+│   14. building_name (String)         │
+│   15. region_code (String)           │
+│   16. payment_date (String:yyyy-MM-dd)│
+│   17. payment_amount (BigNumber)     │
+│   18. payment_method (String)        │
+│   19. created_at (String:yyyy-MM-dd) │
+│   20. updated_at (String:yyyy-MM-dd) │
+│   21. extraction_timestamp (String:yyyy-MM-dd)│
+│   22. source_type (String)           │
+│   23. source_filename (String)       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values 2                      │
+│ - Type : Select Values               │
+│ - Convertit 6 champs String → Date   │
+│   avec format yyyy-MM-dd :           │
+│   • invoice_date                     │
+│   • due_date                         │
+│   • payment_date                     │
+│   • created_at                       │
+│   • updated_at                       │
+│   • extraction_timestamp             │
+│ - Prépare pour lookups dimensionnels │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ String operations                    │
+│ - Type : String Operations           │
+│ - Trim (both) sur 11 champs texte :  │
+│   • invoice_number, status           │
+│   • client_code, client_name, sector │
+│   • building_code, building_name     │
+│   • region_code, payment_method      │
+│   • source_type, source_filename     │
+│ - Nettoie avant lookups              │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_TEMPS          │
+│ - Type : Database Lookup             │
+│ - Table : dim_temps                  │
+│ - Clé : invoice_date → date_complete │
+│ - Retourne : id_temps (Integer)      │
+│ - Cherche la dimension temps         │
+│   basée sur la date de facturation   │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_REGION         │
+│ - Type : Database Lookup             │
+│ - Table : dim_region                 │
+│ - Clé : region_code → code_region    │
+│ - Retourne : id_region (Integer)     │
+│ - Cherche la dimension région        │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_BATIMENT       │
+│ - Type : Database Lookup             │
+│ - Table : dim_batiment               │
+│ - Clé : building_code → code_batiment│
+│ - Retourne : id_batiment (Integer)   │
+│ - Cherche la dimension bâtiment      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_CLIENT         │
+│ - Type : Database Lookup             │
+│ - Table : dim_client                 │
+│ - Clé : client_code → code_client    │
+│ - Retourne : id_client (Integer)     │
+│ - Cherche la dimension client        │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_FACTURE        │
+│ - Type : Database Lookup             │
+│ - Table : dim_facture                │
+│ - Clé : invoice_number → numero_facture│
+│ - Retourne : id_facture (Integer)    │
+│ - Cherche la dimension facture       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_PAIEMENT       │
+│ - Type : Database Lookup             │
+│ - Table : dim_paiement               │
+│ - Clé : payment_method → methode_paiement│
+│ - Retourne : id_paiement (Integer)   │
+│ - Cherche la dimension paiement      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator                           │
+│ - Type : Calculator                  │
+│ - Calcule 4 indicateurs :            │
+│   1. marge = total_ttc - energy_cost │
+│      (Bénéfice brut)                 │
+│   2. taux_marge = marge / total_ttc  │
+│      (Pourcentage de marge)          │
+│   3. delai_paiement = payment_date - due_date│
+│      (Jours de retard/avance)        │
+│   4. taux_recouvrement = payment_amount / total_ttc│
+│      (Pourcentage recouvré)          │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values                        │
+│ - Type : Select Values               │
+│ - Sélectionne 18 champs pour la      │
+│   table de fait :                    │
+│   1. id_temps                        │
+│   2. id_batiment                     │
+│   3. id_region                       │
+│   4. id_client                       │
+│   5. id_facture                      │
+│   6. id_paiement                     │
+│   7. total_ht                        │
+│   8. tva_amount                      │
+│   9. total_ttc                       │
+│   10. energy_cost                    │
+│   11. payment_amount                 │
+│   12. marge                          │
+│   13. taux_marge                     │
+│   14. delai_paiement                 │
+│   15. taux_recouvrement              │
+│   16. source_filename                │
+│   17. extraction_timestamp           │
+│ - Prépare les champs pour l'insertion│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Insert / update                      │
+│ - Type : Insert Update               │
+│ - Table : fait_rentabilite           │
+│ - Stratégie : Insert/Update          │
+│   (UPSERT sur 6 clés composites)     │
+│ - Clés de lookup (6) :               │
+│   1. id_temps                        │
+│   2. id_batiment                     │
+│   3. id_region                       │
+│   4. id_client                       │
+│   5. id_facture                      │
+│   6. id_paiement                     │
+│ - Champs insérés/mis à jour (18) :   │
+│   1. id_temps                        │
+│   2. id_batiment                     │
+│   3. id_region                       │
+│   4. id_client                       │
+│   5. id_facture                      │
+│   6. id_paiement                     │
+│   7. montant_ht                      │
+│   8. montant_tva                     │
+│   9. montant_ttc                     │
+│   10. cout_energie                   │
+│   11. montant_paye                   │
+│   12. marge                          │
+│   13. taux_marge                     │
+│   14. delai_paiement                 │
+│   15. taux_recouvrement              │
+│   16. source_id                      │
+│   17. date_extraction                │
+│ - Commit toutes les 100 lignes       │
+│ - Tous les champs mis à jour (update=Y)│
+└──────────────────────────────────────┘
+
+FLUX DE CHARGEMENT DIMENSIONNEL :
+• Lecture des données transformées (CSV)
+• Conversion des dates String → Date
+• Nettoyage des chaînes (trim)
+• Séquence de 6 lookups dimensionnels :
+  1. DIM_TEMPS : Date facture → ID temps
+  2. DIM_REGION : Code région → ID région
+  3. DIM_BATIMENT : Code bâtiment → ID bâtiment
+  4. DIM_CLIENT : Code client → ID client
+  5. DIM_FACTURE : Numéro facture → ID facture
+  6. DIM_PAIEMENT : Méthode paiement → ID paiement
+• Calcul de 4 indicateurs financiers
+• Préparation des champs de fait
+• Insertion/Update dans la table de fait
+
+MAPPING DES TABLES DIMENSIONNELLES :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Source → Table Dimension → Champ Clé → Champ Retour                │
+├─────────────────────────────────────────────────────────────────────┤
+│ invoice_date → dim_temps → date_complete → id_temps               │
+│ region_code → dim_region → code_region → id_region                │
+│ building_code → dim_batiment → code_batiment → id_batiment        │
+│ client_code → dim_client → code_client → id_client                │
+│ invoice_number → dim_facture → numero_facture → id_facture        │
+│ payment_method → dim_paiement → methode_paiement → id_paiement    │
+└─────────────────────────────────────────────────────────────────────┘
+
+CALCULS FINANCIERS :
+1. **Marge** = total_ttc - energy_cost
+   - Bénéfice brut après coût énergétique
+2. **Taux marge** = marge / total_ttc
+   - Pourcentage de marge sur chiffre d'affaires
+3. **Délai paiement** = payment_date - due_date
+   - Nombre de jours entre paiement et échéance
+   - Positif = retard, Négatif = avance
+4. **Taux recouvrement** = payment_amount / total_ttc
+   - Pourcentage de la facture effectivement payé
+   - ≤ 1 (100%)
+
+MAPPING TABLE DE FAIT :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Champ Source → Champ Table Fait → Type                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ total_ht → montant_ht → Mesure                                    │
+│ tva_amount → montant_tva → Mesure                                 │
+│ total_ttc → montant_ttc → Mesure                                  │
+│ energy_cost → cout_energie → Mesure                               │
+│ payment_amount → montant_paye → Mesure                            │
+│ marge → marge → Mesure (calculée)                                 │
+│ taux_marge → taux_marge → Mesure (calculée)                       │
+│ delai_paiement → delai_paiement → Mesure (calculée)               │
+│ taux_recouvrement → taux_recouvrement → Mesure (calculée)         │
+│ source_filename → source_id → Métadata                            │
+│ extraction_timestamp → date_extraction → Métadata                 │
+│ id_temps → id_temps → Clé étrangère                               │
+│ id_region → id_region → Clé étrangère                             │
+│ id_batiment → id_batiment → Clé étrangère                         │
+│ id_client → id_client → Clé étrangère                             │
+│ id_facture → id_facture → Clé étrangère                           │
+│ id_paiement → id_paiement → Clé étrangère                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+STRATÉGIE D'INSERTION :
+• Type : Insert Update (UPSERT)
+• Clés composites : 6 dimensions
+   (Temps, Bâtiment, Région, Client, Facture, Paiement)
+• Si existe : Mise à jour de TOUS les champs (update=Y)
+• Si n'existe pas : Insertion nouvelle ligne
+• Commit batch : 100 lignes
+
+CHAMPS IGNORÉS DANS LE FAIT :
+• invoice_id (redondant avec numéro facture)
+• status, client_name, building_name (dans dimensions)
+• sector, source_type, created_at, updated_at
+• due_date, payment_date (utilisées dans calculs seulement)
+
+VALIDATIONS IMPLICITES :
+• Tous les lookups doivent réussir
+• Les dimensions doivent être pré-chargées
+• Les calculs nécessitent des valeurs numériques valides
+• Format des dates doit correspondre aux dimensions
+
+INDICATEURS DE PERFORMANCE :
+• Marge : Profitabilité après coût énergétique
+• Taux marge : Efficacité commerciale
+• Délai paiement : Gestion de trésorerie
+• Taux recouvrement : Efficacité recouvrement
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  09_Load_DM_Environnement FLOW                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+CONNEXION BASE DE DONNÉES :
+┌──────────────────────────────────────┐
+│ Connexion MySQL : greencity_dw       │
+│ - Serveur : localhost                │
+│ - Port : 3306                        │
+│ - Base : greencity_dw                │
+│ - Utilisateur : root                 │
+└──────────────────────────────────────┘
+
+SOURCE DE DONNÉES TRANSFORMÉES :
+┌──────────────────────────────────────┐
+│ CSV file input                       │
+│ - Type : CSV File Input              │
+│ - Fichier : transformed_environnement.csv│
+│ - 11 champs transformés :            │
+│   1. region_code (String)            │
+│   2. report_date (String)            │
+│   3. building_code (String)          │
+│   4. emission_co2_kg (BigNumber)     │
+│   5. recycling_rate (BigNumber)      │
+│   6. recycling_rate_percent (BigNumber)│
+│   7. extraction_timestamp (String)   │
+│   8. source_filename (String)        │
+│   9. source_type (String)            │
+│   10. created_at (String)            │
+│   11. updated_at (String)            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values                        │
+│ - Type : Select Values               │
+│ - Convertit 4 champs String → Date   │
+│   avec format yyyy-MM-dd :           │
+│   • report_date                      │
+│   • extraction_timestamp             │
+│   • created_at                       │
+│   • updated_at                       │
+│ - Prépare pour lookups dimensionnels │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ String operations                    │
+│ - Type : String Operations           │
+│ - Trim (both) sur 4 champs texte :   │
+│   • region_code                      │
+│   • building_code                    │
+│   • source_filename                  │
+│   • source_type                      │
+│ - Nettoie avant lookups              │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_TEMPS          │
+│ - Type : Database Lookup             │
+│ - Table : dim_temps                  │
+│ - Clé : report_date → date_complete  │
+│ - Retourne : id_temps (Integer)      │
+│ - Cherche la dimension temps         │
+│   basée sur la date de rapport       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_REGION         │
+│ - Type : Database Lookup             │
+│ - Table : dim_region                 │
+│ - Clé : region_code → code_region    │
+│ - Retourne : id_region (Integer)     │
+│ - Cherche la dimension région        │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_BATIMENT       │
+│ - Type : Database Lookup             │
+│ - Table : dim_batiment               │
+│ - Clé : building_code → code_batiment│
+│ - Retourne : id_batiment (Integer)   │
+│ - Cherche la dimension bâtiment      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Add sequence                         │
+│ - Type : Sequence                    │
+│ - Ajoute : row_id                    │
+│ - Valeur initiale : 1                │
+│ - Incrément : 1                      │
+│ - Max : 999999999                    │
+│ - Crée un identifiant unique par ligne│
+│   pour le processus de normalisation │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Row normaliser                       │
+│ - Type : Normaliser                  │
+│ - Transforme 2 indicateurs en        │
+│   structure type-valeur :            │
+│   • emission_co2_kg → type "CO2"     │
+│   • recycling_rate_percent → type "Recyclage"│
+│ - Crée 2 lignes par entrée :         │
+│   Ligne 1 : CO2                      │
+│   Ligne 2 : Recyclage                │
+│ - Champs produits :                  │
+│   • typefield (String)               │
+│   • valeur_mesuree (Number)          │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_ENVIRONNEMENT  │
+│ - Type : Database Lookup             │
+│ - Table : dim_environnement          │
+│ - Clé : typefield → type_indicateur  │
+│ - Retourne :                         │
+│   • id_environnement (Integer)       │
+│   • seuil_optimal (Number)           │
+│   • seuil_alerte (Number)            │
+│ - Cherche la dimension environnement │
+│   + récupère les seuils de référence │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator 2                         │
+│ - Type : Calculator                  │
+│ - Calcule :                          │
+│   • ecart_reference =                │
+│     valeur_mesuree - seuil_optimal   │
+│ - Mesure l'écart par rapport au      │
+│   seuil optimal de référence         │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Modified JavaScript value            │
+│ - Type : JavaScript                  │
+│ - Calcule catégorie performance :    │
+│   • Si valeur_mesuree ≤ seuil_optimal│
+│     → "Excellente"                   │
+│   • Si valeur_mesuree ≤ seuil_alerte │
+│     → "Moyenne"                      │
+│   • Sinon → "À améliorer"            │
+│ - Détermine la performance basée sur │
+│   les seuils de référence            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Insert / update                      │
+│ - Type : Insert Update               │
+│ - Table : fait_environnement         │
+│ - Stratégie : Insert/Update          │
+│   (UPSERT sur 4 clés composites)     │
+│ - Clés de lookup (4) :               │
+│   1. id_temps                        │
+│   2. id_region                       │
+│   3. id_batiment                     │
+│   4. id_environnement                │
+│ - Champs insérés/mis à jour (9) :    │
+│   1. id_temps                        │
+│   2. id_region                       │
+│   3. id_batiment                     │
+│   4. id_environnement                │
+│   5. valeur_mesuree                  │
+│   6. valeur_reference                │
+│   7. ecart_reference                 │
+│   8. categorie_performance           │
+│   9. source_id                       │
+│   10. date_extraction                │
+│ - Commit toutes les 100 lignes       │
+│ - Tous les champs mis à jour (update=Y)│
+└──────────────────────────────────────┘
+
+FLUX DE CHARGEMENT DIMENSIONNEL :
+• Lecture des données transformées (CSV)
+• Conversion des dates String → Date
+• Nettoyage des chaînes (trim)
+• Séquence de 3 lookups dimensionnels :
+  1. DIM_TEMPS : Date rapport → ID temps
+  2. DIM_REGION : Code région → ID région
+  3. DIM_BATIMENT : Code bâtiment → ID bâtiment
+• Ajout d'un identifiant de séquence
+• Normalisation des 2 indicateurs en 2 lignes
+• Lookup dimension environnement + seuils
+• Calcul de l'écart par rapport au seuil optimal
+• Catégorisation de la performance
+• Insertion/Update dans la table de fait
+
+MAPPING DES TABLES DIMENSIONNELLES :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Source → Table Dimension → Champ Clé → Champ Retour                │
+├─────────────────────────────────────────────────────────────────────┤
+│ report_date → dim_temps → date_complete → id_temps               │
+│ region_code → dim_region → code_region → id_region                │
+│ building_code → dim_batiment → code_batiment → id_batiment        │
+│ typefield → dim_environnement → type_indicateur → id_environnement + seuils│
+└─────────────────────────────────────────────────────────────────────┘
+
+NORMALISATION DES INDICATEURS :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Champ Source → Type → Valeur Normalisée                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ emission_co2_kg → "CO2" → valeur_mesuree                           │
+│ recycling_rate_percent → "Recyclage" → valeur_mesuree              │
+└─────────────────────────────────────────────────────────────────────┘
+
+TRANSFORMATION 1 → 2 LIGNES :
+• Entrée : 1 ligne avec 2 indicateurs
+• Sortie : 2 lignes avec 1 indicateur chacune
+• Permet le stockage normalisé dans le fait
+
+SEUILS DE RÉFÉRENCE :
+• **seuil_optimal** : Valeur cible idéale
+• **seuil_alerte** : Valeur limite acceptable
+• Stockés dans la dimension environnement
+
+CALCULS DE PERFORMANCE :
+1. **Écart référence** = valeur_mesuree - seuil_optimal
+   - Différence par rapport à la cible
+   - Positif = au-dessus, Négatif = en-dessous
+2. **Catégorie performance** :
+   - Excellente : ≤ seuil_optimal
+   - Moyenne : ≤ seuil_alerte
+   - À améliorer : > seuil_alerte
+
+MAPPING TABLE DE FAIT :
+┌─────────────────────────────────────────────────────────────────────┐
+│ Champ Source → Champ Table Fait → Type                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ valeur_mesuree → valeur_mesuree → Mesure                          │
+│ seuil_optimal → valeur_reference → Référence                     │
+│ ecart_reference → ecart_reference → Mesure (calculée)            │
+│ categorie_performance → categorie_performance → Catégorie        │
+│ source_filename → source_id → Métadata                           │
+│ extraction_timestamp → date_extraction → Métadata                │
+│ id_temps → id_temps → Clé étrangère                              │
+│ id_region → id_region → Clé étrangère                            │
+│ id_batiment → id_batiment → Clé étrangère                        │
+│ id_environnement → id_environnement → Clé étrangère              │
+└─────────────────────────────────────────────────────────────────────┘
+
+STRATÉGIE D'INSERTION :
+• Type : Insert Update (UPSERT)
+• Clés composites : 4 dimensions
+   (Temps, Région, Bâtiment, Environnement)
+• Si existe : Mise à jour de TOUS les champs (update=Y)
+• Si n'existe pas : Insertion nouvelle ligne
+• Commit batch : 100 lignes
+• Structure adaptée pour 2 indicateurs par rapport
+
+CHAMPS IGNORÉS DANS LE FAIT :
+• recycling_rate (décimal) → utilisé recycling_rate_percent
+• created_at, updated_at
+• source_type
+• row_id (temporaire pour la normalisation)
+• emission_co2_kg et recycling_rate_percent transformés
+
+VALIDATIONS IMPLICITES :
+• Tous les lookups doivent réussir
+• Les dimensions doivent être pré-chargées
+• Les indicateurs doivent avoir des seuils définis
+• Format des dates doit correspondre aux dimensions
+
+INDICATEURS ENVIRONNEMENTAUX :
+1. **CO2** : Émissions en kg
+   - Mesure : kilogrammes
+   - Objectif : Minimiser (plus bas = meilleur)
+2. **Recyclage** : Taux en pourcentage
+   - Mesure : pourcentage (0-100%)
+   - Objectif : Maximiser (plus haut = meilleur)
+
+INTERPRÉTATION DES RÉSULTATS :
+• **Écart référence** :
+  - Négatif pour CO2 = Bon (émissions inférieures à la cible)
+  - Positif pour Recyclage = Bon (taux supérieur à la cible)
+• **Catégorie performance** :
+  - Excellente : Performance optimale
+  - Moyenne : Performance acceptable
+  - À améliorer : Action corrective nécessaire
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          Main_ETL_Job FLOW                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+ENVIRONNEMENT D'EXÉCUTION :
+┌──────────────────────────────────────┐
+│ Pentaho Data Integration (PDI/Kettle)│
+│ - Version : Kettle                     │
+│ - Mode : Local                        │
+│ - Configuration : Pentaho local      │
+│ - Logging : Basic                     │
+└──────────────────────────────────────┘
+
+DÉMARRAGE DU JOB :
+┌──────────────────────────────────────┐
+│ Start                                │
+│ - Type : SPECIAL                     │
+│ - Point de départ du job            │
+│ - Pas de paramètres                 │
+│ - Pas de planification active       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Nettoyer Staging Area               │
+│ - Type : SHELL                       │
+│ - Script Windows Batch :            │
+│   del /Q "raw\*.csv"               │
+│   del /Q "transformed\*.csv"       │
+│ - Supprime tous les fichiers        │
+│   temporaires des runs précédents   │
+│ - Chemins :                         │
+│   • C:\...\05_Staging_area\raw      │
+│   • C:\...\05_Staging_area\transformed│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Extraction JSON                      │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   01_Extract_JSON_to_Staging.ktr    │
+│ - Chemin :                          │
+│   C:\...\01_extract\                │
+│ - Extraction depuis sources JSON    │
+│   vers staging area                 │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Extraction CSV                       │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   02_Extract_CSV_to_Staging.ktr     │
+│ - Chemin :                          │
+│   C:\...\01_extract\                │
+│ - Extraction depuis fichiers CSV    │
+│   vers staging area                 │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Extraction MySQL                     │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   03_Extract_MySQL_to_Staging.ktr   │
+│ - Chemin :                          │
+│   C:\...\01_extract\                │
+│ - Extraction depuis base MySQL      │
+│   vers staging area                 │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Transform Consommation               │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   04_Transform_Consommation.ktr     │
+│ - Chemin :                          │
+│   C:\...\02_transform\              │
+│ - Transformation des données        │
+│   de consommation                   │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Transform Rentabilite                │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   05_Transform_Rentabilite.ktr      │
+│ - Chemin :                          │
+│   C:\...\02_transform\              │
+│ - Transformation des données        │
+│   de rentabilité                   │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Transform Environnement              │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   06_Transform_Environnement.ktr    │
+│ - Chemin :                          │
+│   C:\...\02_transform\              │
+│ - Transformation des données        │
+│   environnementales                 │
+│ - Génère transformed_environnement.csv│
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Load DM Consommation                 │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   07_Load_DM_Consommation.ktr       │
+│ - Chemin :                          │
+│   C:\...\03_load\                   │
+│ - Chargement Data Mart Consommation │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Load DM Rentabilite                  │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   08_Load_DM_Rentabilite.ktr        │
+│ - Chemin :                          │
+│   C:\...\03_load\                   │
+│ - Chargement Data Mart Rentabilité  │
+│ - Attend fin d'exécution            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Load DM Environnement                │
+│ - Type : TRANSFORMATION             │
+│ - Fichier :                         │
+│   09_Load_DM_Environnement.ktr      │
+│ - Chemin :                          │
+│   C:\...\03_load\                   │
+│ - Chargement Data Mart Environnement│
+│ - Détail du flow :                  │
+│   ↓ Voir schéma détaillé ci-dessous ↓│
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Success                              │
+│ - Type : SUCCESS                     │
+│ - Point de terminaison du job       │
+│ - Job terminé avec succès           │
+└──────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  09_Load_DM_Environnement FLOW (DÉTAIL)               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+CONNEXION BASE DE DONNÉES :
+┌──────────────────────────────────────┐
+│ Connexion MySQL : greencity_dw       │
+│ - Serveur : localhost                │
+│ - Port : 3306                        │
+│ - Base : greencity_dw                │
+│ - Utilisateur : root                 │
+└──────────────────────────────────────┘
+
+SOURCE DE DONNÉES TRANSFORMÉES :
+┌──────────────────────────────────────┐
+│ CSV file input                       │
+│ - Type : CSV File Input              │
+│ - Fichier : transformed_environnement.csv│
+│ - 11 champs transformés :            │
+│   1. region_code (String)            │
+│   2. report_date (String)            │
+│   3. building_code (String)          │
+│   4. emission_co2_kg (BigNumber)     │
+│   5. recycling_rate (BigNumber)      │
+│   6. recycling_rate_percent (BigNumber)│
+│   7. extraction_timestamp (String)   │
+│   8. source_filename (String)        │
+│   9. source_type (String)            │
+│   10. created_at (String)            │
+│   11. updated_at (String)            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Select values                        │
+│ - Type : Select Values               │
+│ - Convertit 4 champs String → Date   │
+│   avec format yyyy-MM-dd :           │
+│   • report_date                      │
+│   • extraction_timestamp             │
+│   • created_at                       │
+│   • updated_at                       │
+│ - Prépare pour lookups dimensionnels │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ String operations                    │
+│ - Type : String Operations           │
+│ - Trim (both) sur 4 champs texte :   │
+│   • region_code                      │
+│   • building_code                    │
+│   • source_filename                  │
+│   • source_type                      │
+│ - Nettoie avant lookups              │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_TEMPS          │
+│ - Type : Database Lookup             │
+│ - Table : dim_temps                  │
+│ - Clé : report_date → date_complete  │
+│ - Retourne : id_temps (Integer)      │
+│ - Cherche la dimension temps         │
+│   basée sur la date de rapport       │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_REGION         │
+│ - Type : Database Lookup             │
+│ - Table : dim_region                 │
+│ - Clé : region_code → code_region    │
+│ - Retourne : id_region (Integer)     │
+│ - Cherche la dimension région        │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_BATIMENT       │
+│ - Type : Database Lookup             │
+│ - Table : dim_batiment               │
+│ - Clé : building_code → code_batiment│
+│ - Retourne : id_batiment (Integer)   │
+│ - Cherche la dimension bâtiment      │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Add sequence                         │
+│ - Type : Sequence                    │
+│ - Ajoute : row_id                    │
+│ - Valeur initiale : 1                │
+│ - Incrément : 1                      │
+│ - Max : 999999999                    │
+│ - Crée un identifiant unique par ligne│
+│   pour le processus de normalisation │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Row normaliser                       │
+│ - Type : Normaliser                  │
+│ - Transforme 2 indicateurs en        │
+│   structure type-valeur :            │
+│   • emission_co2_kg → type "CO2"     │
+│   • recycling_rate_percent → type "Recyclage"│
+│ - Crée 2 lignes par entrée :         │
+│   Ligne 1 : CO2                      │
+│   Ligne 2 : Recyclage                │
+│ - Champs produits :                  │
+│   • typefield (String)               │
+│   • valeur_mesuree (Number)          │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Database lookup - DIM_ENVIRONNEMENT  │
+│ - Type : Database Lookup             │
+│ - Table : dim_environnement          │
+│ - Clé : typefield → type_indicateur  │
+│ - Retourne :                         │
+│   • id_environnement (Integer)       │
+│   • seuil_optimal (Number)           │
+│   • seuil_alerte (Number)            │
+│ - Cherche la dimension environnement │
+│   + récupère les seuils de référence │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Calculator 2                         │
+│ - Type : Calculator                  │
+│ - Calcule :                          │
+│   • ecart_reference =                │
+│     valeur_mesuree - seuil_optimal   │
+│ - Mesure l'écart par rapport au      │
+│   seuil optimal de référence         │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Modified JavaScript value            │
+│ - Type : JavaScript                  │
+│ - Calcule catégorie performance :    │
+│   • Si valeur_mesuree ≤ seuil_optimal│
+│     → "Excellente"                   │
+│   • Si valeur_mesuree ≤ seuil_alerte │
+│     → "Moyenne"                      │
+│   • Sinon → "À améliorer"            │
+│ - Détermine la performance basée sur │
+│   les seuils de référence            │
+└───────────────┬──────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────┐
+│ Insert / update                      │
+│ - Type : Insert Update               │
+│ - Table : fait_environnement         │
+│ - Stratégie : Insert/Update          │
+│   (UPSERT sur 4 clés composites)     │
+│ - Clés de lookup (4) :               │
+│   1. id_temps                        │
+│   2. id_region                       │
+│   3. id_batiment                     │
+│   4. id_environnement                │
+│ - Champs insérés/mis à jour (9) :    │
+│   1. id_temps                        │
+│   2. id_region                       │
+│   3. id_batiment                     │
+│   4. id_environnement                │
+│   5. valeur_mesuree                  │
+│   6. valeur_reference                │
+│   7. ecart_reference                 │
+│   8. categorie_performance           │
+│   9. source_id                       │
+│   10. date_extraction                │
+│ - Commit toutes les 100 lignes       │
+│ - Tous les champs mis à jour (update=Y)│
+└──────────────────────────────────────┘
 
 
 
 
-04_Transform_Consommation.ktr    (clean JSON + MySQL consommation)
-05_Transform_Rentabilite.ktr     (clean MySQL rentabilité only)
-06_Transform_Environnement.ktr   (clean CSV + MySQL environnement)
 
 
 
@@ -374,725 +2642,8 @@ Ces fichiers seront fusionnés en Transformation avec:
 
 
 
-# Phase de Transformation - Consommation Énergétique   COMPLÉTÉ
 
-## Fichier: `04_Transform_Consommation.ktr`
 
-### Objectif:
-Consolider, nettoyer et normaliser les données de consommation énergétique provenant des sources JSON et MySQL en préparation pour le chargement dans le Data Mart.
-
-### État:   TRANSFORMATION COMPLÈTE
-
-#### Résumé des accomplissements:
-1.   **Unification des schémas** - JSON (11 champs) + MySQL (16 champs) → 16 champs standardisés
-2.   **Traduction nomenclature** - Français → Anglais → Français (selon norme finale)
-3.   **Fusion des flux** - Données consolidées en dataset unique
-4.   **Nettoyage qualité données** - 6 étapes de purification implémentées
-5.   **Normalisation formats** - Dates, unités, types d'énergie standardisés
-6.   **Sortie formatée** - CSV prêt pour chargement Data Mart
-
----
-
-## Processus de Transformation Détailé:
-
-### Étape 1: Unification des Schémas (Pré-fusion)
-#### Flux JSON (56 enregistrements):
-
-Original (11 champs) → Ajout 5 champs NULL → Traduction → Réorganisation
-id_region → region_code
-id_batiment → building_code
-type_energie → meter_type
-unite → meter_unit
-compteur_id → meter_code
-date_mesure → reading_date
-consommation_value → consumption_value
-
-
-#### Flux MySQL:
-
-Original (16 champs) → Suppression reading_id → Ajout date_generation → Réorganisation
-→ Alignement parfait avec flux JSON (16 champs identiques)
-
-
-### Étape 2: Fusion des Données
-- **Append streams**: Union verticale des deux flux traités
-- **Résultat**: Dataset unifié avec données JSON + MySQL
-
-### Étape 3: Nettoyage en Cascade (6 Étapes)
-
-#### 3.1 Filtrage des Données Incomplètes (Filter rows)
-
-Conditions:
-- consumption_value IS NOT NULL
-- reading_date IS NOT NULL  
-- building_code IS NOT NULL
-
-**Impact**: Élimination des enregistrements non analysables
-
-#### 3.2 Nettoyage des Espaces (trim)
-- **Champs traités**: Tous les champs texte
-- **Action**: Trim (both) pour éliminer espaces superflus
-- **Cible particulière**: `source_filename`, codes région/bâtiment
-
-#### 3.3 Standardisation des Valeurs (Replace in string)
-| Valeur Originale | Valeur Standardisée | Rationale       |
-|------------------|---------------------|-----------------|
-| `"electricity"`  | `"electricite"`     | Norme française |
-| `"gas"`          | `"gaz"`             | Norme française |
-| `"water"`        | `"eau"`             | Norme française |
-| `"KWh"`          | `"kWh"`             | Norme d'unité   |
-
-#### 3.4 Normalisation des Dates - Préparation (fixing date)
-- **Problème**: Format ISO avec `T` (`2025-01-14T08:00:00`)
-- **Solution**: Remplacement `"T"` → `" "`
-- **Résultat**: `2025-01-14 08:00:00` (format SQL standard)
-
-#### 3.5 Formatage des Métadonnées Temporelles (Select values)
-- `extraction_timestamp`: `yyyy/MM/dd HH:mm:ss.SSS`
-- `date_generation`: `yyyy-MM-dd`
-- `created_at`, `updated_at`: `yyyy/MM/dd HH:mm:ss`
-- **Objectif**: Cohérence pour analyse temporelle
-
-#### 3.6 Normalisation Avancée des Dates (Modified JavaScript value)
-
-Fonctions implémentées:
-1. Suppression du 'T' ISO si présent
-2. Conversion dd/MM/yyyy HH:mm → yyyy-MM-dd HH:mm:00
-3. Conversion yyyy/MM/dd HH:mm:ss → yyyy-MM-dd HH:mm:ss
-4. Ajout 00:00:00 si heure manquante
-
-**Résultat**: Toutes les dates au format `yyyy-MM-dd HH:mm:ss`
-
-### Étape 4: Sortie Formatée
-- **Fichier**: `transformed_consommation.csv`
-- **Location**: `05_Staging_area/transformed/`
-- **Format**: CSV avec en-têtes, UTF-8, guillemets doubles
-- **Champs**: 16 champs normalisés
-
----
-
-## Problèmes de Qualité Résolus:
-
-### 1.   Formats de Date Incohérents
-**Avant**:
-- `2025-01-14T08:00:00` (ISO)
-- `14/01/2025 10:00` (Français)
-- `2025/01/01 23:00:00` (Slashes)
-
-**Après**: Tous `yyyy-MM-dd HH:mm:ss`
-
-### 2.   Valeurs Manquantes/Invalides
-- Filtrage des `consumption_value` NULL/vides
-- Conservation des `temperature` NULL (acceptable - absent JSON)
-
-### 3.   Incohérences de Valeurs
-- `meter_type`: `electricity`/`gas`/`water` → `electricite`/`gaz`/`eau`
-- `meter_unit`: `KWh` → `kWh` (standard minuscule)
-
-### 4.   Problèmes de Formatage
-- Espaces superflus éliminés (trim)
-- Structure de données cohérente
-
-### 5.   Schémas Hétérogènes
-- Fusion JSON (mesures IoT) + MySQL (données relationnelles)
-- Champs manquants complétés avec NULL
-- Nomenclature unifiée
-
----
-
-## Métriques de Qualité Finales:
-
-|          Métrique                | Valeur |
-|----------------------------------|--------|
-|Champs standardisés               | 100%   |
-|Formats date cohérents            | 100%   | 
-| Valeurs manquantes (consumption) | 0%     | 
-| Unités normalisées               | 100%   | 
-| Types énergie standardisés       | 100%   |  
-
----
-
-## Fichier de Sortie: `transformed_consommation.csv`
-
-### Structure (16 champs):
-
-region_code,building_code,meter_type,meter_code,meter_unit,reading_date,
-consumption_value,temperature,building_name,region_name,source_type,
-source_filename,extraction_timestamp,date_generation,created_at,updated_at
-
-
-### Caractéristiques:
-- **Encodage**: UTF-8
-- **Séparateur**: Virgule
-- **En-têtes**: Oui
-- **Guillemets**: Doubles quotes pour textes
-- **Dates**: Format standard `yyyy-MM-dd HH:mm:ss`
-- **Prêt pour**: Chargement Data Mart Consommation
-
----
-
-## Préparation pour Phase Suivante (LOAD):
-
-### Données prêtes pour:
-1. **Chargement incrémental** dans Data Mart Consommation
-2. **Agrégations temporelles** (heure → jour → mois)
-3. **Analyse corrélation** consommation vs température
-4. **Calcul KPI** par région/bâtiment/type énergie
-
-### Intégration avec autres Data Marts:
-- **Consommation**: Ce fichier (énergie utilisée)
-- **Rentabilité**: À venir (coûts associés)
-- **Environnement**: À venir (émissions CO2)
-
----
-
-## Leçons Apprises:
-1. **Importance schéma early** - Définir structure cible avant transformation
-2. **Traitement par étapes** - 6 étapes successives > 1 étape complexe
-3. **Traçabilité** - Garder `source_filename`, `source_type` pour audit
-4. **Normalisation progressive** - Dates → Unités → Types → Nettoyage
-
----
-
-**État**:   PRÊT POUR CHARGEMENT DATA MART**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Phase de Transformation - Impact Environnemental   COMPLÉTÉ
-
-## Fichier: `06_Transform_Environnement.ktr`
-
-### Objectif:
-Consolider, valider et nettoyer les données d'impact environnemental (émissions CO2, taux de recyclage) provenant des sources CSV et MySQL avec gestion avancée de la qualité des données.
-
-### État:   TRANSFORMATION COMPLÈTE AVEC GESTION D'ERREURS
-
-#### Innovation clé: **Pipeline à deux voies**
-- **Voie principale**: Données conformes → Traitement standard
-- **Voie de correction**: Données non conformes → Nettoyage → Réintégration
-- **Voie de rejet**: Données irrécupérables → Log pour audit
-
----
-
-## Architecture du Pipeline de Qualité:
-
-
-[Fusion sources] → [Nettoyage basique] → [Validation format] → [DIVERGENCE]
-       │                                         │
-       ├─► Données conformes ────────────────────┤
-       │    [Validation numérique] → [Validation plages] → [Normalisation] → [Sortie]
-       │
-       └─► Données non conformes ────────────────┘
-            [Correction] → [Réintégration] ──────┘
-
-
----
-
-## Processus Détailé:
-
-### Étape 1: Unification des Sources
-#### Flux CSV (53 enregistrements):
-
-Original (8 champs) → Ajout created_at/updated_at → Traduction → Réorganisation
-id_region → region_code
-id_batiment → building_code
-date_rapport → report_date
-emission_CO2_kg → emission_co2_kg
-taux_recyclage → recycling_rate
-
-
-#### Flux MySQL:
-
-Original (10 champs) → Suppression report_id → Ajout updated_at → Réorganisation
-→ Alignement parfait (10 champs identiques)
-
-
-### Étape 2: Nettoyage Initial
-- **Trim**: Tous les champs texte nettoyés
-- **Standardisation**: Nomenclature uniforme
-
-### Étape 3: **Validation des Formats (Filter rows 3)**
-#### Vérification par expressions régulières:
-- `region_code`: Doit correspondre à `REG[0-9]{2}` (ex: REG01, REG99)
-- `building_code`: Doit correspondre à `BAT[0-9]{3}` (ex: BAT001, BAT999)
-
-#### Résultats:
-- **Conforme**: Poursuit dans la voie principale
-- **Non conforme**: Redirigé vers voie de correction
-
-### Étape 4: **Correction des Données Non Conformes (Voie de correction)**
-#### Modified JavaScript value 2:
-```javascript
-Traitement intelligent:
-- region_code invalide → "NON_RENSEIGNE"
-- building_code invalide → "NON_RENSEIGNE"
-- Création de champs nettoyés: region_clean, building_clean
-```
-
-#### Calculator_Unifier:
-- Utilisation de `NVL()` pour prioriser les valeurs originales
-- Fallback sur les valeurs corrigées si original NULL/invalide
-
-#### Réintégration:
-- Données corrigées rejoignent le flux principal via "Append streams 2"
-- **Philosophie**: Mieux vaut une valeur corrigée qu'une suppression
-
-### Étape 5: **Validation Numérique (Filter rows)**
-#### Vérification des types:
-- `emission_co2_kg`: Doit être numérique (regex validation)
-- `recycling_rate`: Doit être numérique (regex validation)
-
-#### Résultats:
-- **Numérique**: Poursuit le traitement
-- **Non numérique**: Rejeté vers "Dummy" (audit)
-
-### Étape 6: **Validation des Plages (Filter rows 2)**
-#### Contrôles métier:
-- `emission_co2_kg`: Entre 0 et 10000 kg (plage réaliste)
-- `recycling_rate`: Entre 0 et 1 (0% à 100%)
-
-#### Rationale:
-- CO2 négatif impossible
-- Taux recyclage > 100% impossible
-- Valeurs extrêmes probablement erronées
-
-### Étape 7: **Normalisation Avancée**
-#### Select values 3:
-- Typage précis: `BigNumber(7,2)` pour CO2 (ex: 512.50)
-- Typage précis: `BigNumber(5,3)` pour taux (ex: 0.715)
-
-#### Modified JavaScript value:
-```javascript
-Normalisation des dates report_date:
-- "2025/03/31" → "2025-03-31"
-- "31/03/2025" → "2025-03-31"  
-- "2025-03-31" → inchangé
-```
-
-#### Select values 6:
-- Formatage standard des timestamps: `yyyy/MM/dd HH:mm:ss.SSS`
-- Cohérence temporelle pour analyse
-
-### Étape 8: **Sortie Finale**
-- **Fichier**: `transformed_environnement.csv`
-- **Encodage**: UTF8
-- **Format**: CSV standard avec en-têtes
-- **Champs**: 10 champs normalisés
-
----
-
-## Problèmes de Qualité Traités:
-
-### 1.   Formats de Codes Invalides
-**Exemples traités**:
-- `"  REG99  "` → Trim → Validation échoue → `"NON_RENSEIGNE"`
-- `"BAT999"` → Validation réussie (BAT[0-9]{3})
-- Codes malformés → Correction plutôt que suppression
-
-### 2.   Valeurs Non Numériques
-**Gestion intelligente**:
-- `"N/A"` dans `emission_co2_kg` → Rejeté (audit nécessaire)
-- `"Non mesuré"` dans `recycling_rate` → Rejeté (audit nécessaire)
-- **Philosophie**: Mieux vaut rejeter que convertir arbitrairement
-
-### 3.   Plages Invalides
-**Contrôles métier**:
-- `99999` (CO2) → Rejeté (hors plage 0-10000)
-- `1.5` (recyclage) → Rejeté (> 100%)
-- Valeurs manifestement erronées isolées
-
-### 4.   Formats de Date Incohérents
-**Normalisation**:
-- Trois formats supportés → Un format standard
-- Garantie de cohérence pour l'analyse temporelle
-
-### 5.   Données Manquantes
-**Stratégie**:
-- NULLs préservés 
-- `"NON_RENSEIGNE"` pour codes invalides
-- Distinction claire: NULL (original) vs "NON_RENSEIGNE" (corrigé)
-
----
-
-## Métriques de Qualité:
-
-| Étape Validation | Critère | Action | Résultat |
-|------------------|---------|--------|----------|
-| Format codes | REGXX, BATXXX | Correction/Réintégration |   Données récupérées |
-| Type numérique | CO2, taux | Rejet si non numérique |   Pureté numérique |
-| Plages métier | CO2: 0-10000, Taux: 0-1 | Rejet si hors plage |   Données réalistes |
-| Cohérence | 3 formats date → 1 | Normalisation |   Analyse temporelle |
-
----
-
-## Fichier de Sortie: `transformed_environnement.csv`
-
-### Structure (10 champs):
-```csv
-region_code,report_date,building_code,emission_co2_kg,recycling_rate,
-extraction_timestamp,source_filename,source_type,created_at,updated_at
-```
-
-### Caractéristiques:
-- **Typage**: Numéros précis (décimales contrôlées)
-- **Dates**: Format `yyyy-MM-dd` standard
-- **Qualité**: Validée sur 4 niveaux (format, type, plage, cohérence)
-
-### Données Incluses:
--   Rapports CSV originaux (nettoyés)
--   Rapports MySQL (déjà propres)
--   Données corrigées ("NON_RENSEIGNE")
--   Données irrécupérables (rejetées avec audit)
-
----
-
-## Innovations du Pipeline:
-
-### 1. **Correction vs Suppression**
-- Traditionnel: Supprimer les données invalides
-- Notre approche: **Corriger quand possible**, supprimer quand nécessaire
-- Exemple: `"  REG  "` → Trim → Invalide → `"NON_RENSEIGNE"` (meilleur que NULL)
-
-### 2. **Validation Multi-niveaux**
-- Niveau 1: Format (regex)
-- Niveau 2: Type (numérique)
-- Niveau 3: Plage (réaliste)
-- Niveau 4: Cohérence (dates)
-
-### 3. **Traçabilité Complète**
-- Source originale préservée (`source_filename`, `source_type`)
-- Horodatages standardisés
-- Distinction NULL original vs valeur corrigée
-
-
----
-
-## Leçons Apprises:
-
-
-
-### 2. **Validation Progressive**
-- Mieux vaut 4 validations simples qu'1 validation complexe
-- Chaque niveau élimine un type de problème différent
-
-### 3. **Correction Intelligente**
-- `"NON_RENSEIGNE"` > NULL pour l'analyse
-- Permet de quantifier "X% des régions non renseignées"
-- Mieux que "X% des données supprimées"
-
-
-
----
-
-## Préparation pour Phase Suivante:
-
-### Données prêtes pour:
-1. **Chargement Data Mart Environnement**
-2. **Calcul KPI**: Émissions totales, tendances CO2
-3. **Analyse écarts**: Régions/bâtiments "NON_RENSEIGNE"
-4. **Tableau de bord**: Impact environnemental visualisable
-
-### Intégration avec:
-- **Consommation**:   Complété (énergie utilisée)
-- **Rentabilité**:  À venir (coûts environnementaux)
-- **Environnement**:   Complété (impact écologique)
-
----
-
-**État**:   PRÊT POUR CHARGEMENT DATA MART ENVIRONNEMENT**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Phase de Transformation - Rentabilité Économique   COMPLÉTÉ
-
-## Fichier: `05_Transform_Rentabilite.ktr`
-
-### Objectif:
-Nettoyer, valider et préparer les données financières (factures, paiements, clients) pour le Data Mart de Rentabilité avec une approche intelligente de correction des données.
-
-### État:   TRANSFORMATION COMPLÈTE AVEC CORRECTION INTELLIGENTE
-
-#### Particularité: **Source unique MySQL**
-- Pas de fusion nécessaire (contrairement aux autres transformations)
-- Focus sur **validation métier** et **correction intelligente**
-- Approche: "Valider → Corriger → Unifier" plutôt que "Supprimer"
-
----
-
-## Architecture du Pipeline:
-
-```
-[Source unique] → [Normalisation dates] → [Nettoyage texte] → [Validation triple]
-        │                                         │                │
-        └─► Données valides (3 codes OK) ────────┼────────────────┘
-        │                                         │
-        └─► Données à corriger (1+ code invalide)┤
-             [Correction codes] → [Unification] ──┘
-```
-
----
-
-## Processus Détailé:
-
-### Étape 1: Chargement Source
-- **Source**: `staging_rentabilite_mysql.csv`
-- **Champs**: 23 champs de facturation complets
-- **Particularité**: Données déjà en anglais, structure cohérente
-
-### Étape 2: Normalisation des Dates (Modified JavaScript value)
-
-Normalisation complète des 6 champs date:
-- invoice_date, due_date, payment_date
-- created_at, updated_at, extraction_timestamp
-
-Actions:
-1. Suppression de la partie heure (focus sur date seule)
-2. Conversion vers format standard yyyy-MM-dd
-3. Support de 3 formats d'entrée:
-   - yyyy-MM-dd (déjà bon)
-   - yyyy/MM/dd (format SQL alternatif)
-   - dd/MM/yyyy (format français)
-
-Rationale:
-- Pour analyse rentabilité: la date suffit (pas besoin heure)
-- Uniformité pour regroupements temporels (mensuel, trimestriel)
-
-
-### Étape 3: Nettoyage Texte (String operations)
-- **Trim** sur 10 champs texte critiques
-- **Focus**: Codes (invoice_number, client_code, building_code, region_code)
-- **Impact**: Élimination d'espaces superflus avant validation
-
-### Étape 4: **Validation Triple Critique (Filter rows 3)**
-#### Vérification simultanée par regex:
-1. **`region_code`**: `REG[0-9]{2}` (ex: REG01, REG15)
-2. **`building_code`**: `BAT[0-9]{3}` (ex: BAT001, BAT999)
-3. **`client_code`**: `CLI[0-9]{3}` (ex: CLI001, CLI010)
-
-#### Logique:
-- **Tous valides** → Direct vers sortie (voie rapide)
-- **Au moins un invalide** → Correction nécessaire (voie de correction)
-
-#### Rationale métier:
-- Une facture sans région valide = problème
-- Un client sans code valide = problème
-- Un bâtiment sans code valide = problème
-- **Mais**: Mieux vaut corriger que perdre la facture
-
-### Étape 5: **Correction Intelligente (Voie de correction)**
-#### Modified JavaScript value 2:
-Correction sélective:
-- region_code invalide → "NON_RENSEIGNE_REGION"
-- building_code invalide → "NON_RENSEIGNE_BATIMENT"
-- client_code invalide → "NON_RENSEIGNE_CLIENT"
-
-Avantages:
-1. Distinction du type de problème
-2. Maintien de la facture pour analyse financière
-3. Identification précise des lacunes
-
-
-#### Calculator_Unifier:
-- Utilisation de `NVL()` pour priorité: original > corrigé
-- Création de champs temporaires `*_code1`
-- **Philosophie**: Conserver l'information financière même si contexte incomplet
-
-#### Select values + Select values 3:
-- Suppression des champs intermédiaires
-- Renommage vers noms standard
-- Préparation pour réintégration
-
-### Étape 6: **Unification Finale (Append streams 2)**
-- Fusion: Données valides + Données corrigées
-- **Résultat**: Dataset complet avec indicateurs de qualité
-
-### Étape 7: **Sortie Formatée**
-- **Fichier**: `transformed_rentabilite.csv`
-- **Encodage**: UTF-8 (standard international)
-- **Format**: CSV avec en-têtes, guillemets doubles
-- **Champs**: 23 champs normalisés
-
----
-
-## Problèmes de Qualité Traités:
-
-### 1.   Formats de Date Incohérents
-**Approche**: Normalisation vers `yyyy-MM-dd` sans heure
-**Impact**: Regroupements temporels précis (CA mensuel, retard paiements)
-
-### 2.   Codes Métier Invalides
-**Stratégie triple**:
-- Validation stricte par regex
-- Correction différenciée ("NON_RENSEIGNE_*")
-- Maintien de la donnée financière
-
-### 3.   Espaces Superflus
-**Traitement**: Trim avant validation
-**Impact**: Évite les faux négatifs de validation
-
-### 4.   Données Manquantes/Invalides
-**Philosophie**:
-- Code invalide ≠ Facture invalide
-- Conserver le montant (`total_ttc`), corriger le contexte
-- Permettre analyse: "CA des factures sans région valide"
-
----
-
-
-## Métriques de Qualité:
-
-| Validation | Critère | Action | Impact Business |
-|------------|---------|--------|-----------------|
-| Codes région | REG[0-9]{2} | Correction différenciée | Analyse par région précise |
-| Codes bâtiment | BAT[0-9]{3} | Correction différenciée | Rentabilité par bâtiment |
-| Codes client | CLI[0-9]{3} | Correction différenciée | Segmentation clientèle |
-| Dates | Standard yyyy-MM-dd | Normalisation | Analyse temporelle fiable |
-
----
-
-## Fichier de Sortie: `transformed_rentabilite.csv`
-
-### Structure (23 champs):
-```csv
-invoice_id,invoice_number,invoice_date,due_date,total_ht,tva_amount,
-total_ttc,energy_cost,status,client_code,client_name,sector,
-building_code,building_name,region_code,payment_date,payment_amount,
-payment_method,created_at,updated_at,extraction_timestamp,
-source_type,source_filename
-```
-
-### Caractéristiques Spéciales:
-1. **Dates normalisées**: `yyyy-MM-dd` (sans heure)
-2. **Codes validés/corrigés**: Distinction claire des problèmes
-3. **Texte nettoyé**: Pas d'espaces superflus
-4. **Traçabilité**: Source et timestamp préservés
-
-### Préparation pour KPI:
-- **CA (Chiffre d'Affaires)**: `total_ttc` nettoyé
-- **Marge**: `total_ttc` - `energy_cost` (calculable)
-- **Retards**: `due_date` vs `payment_date` (comparables)
-- **Rentabilité**: Agrégation par région/bâtiment/client
-
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Step 9: Select values
-Keep only fields needed for FAIT_RENTABILITE:
-
-id_temps, id_batiment, id_region, id_client
-
-id_facture, id_paiement
-
-total_ht, tva_amount, total_ttc, energy_cost
-
-
-
-
-payment_amount, marge, taux_marge, delai_paiement, taux_recouvrement
-
-source_filename, extraction_timestamp
-
-
-
-
-Step 10: Insert/Update to FAIT_RENTABILITE
-Key fields: id_temps, id_batiment, id_region, id_client, id_facture, id_paiement
-
-Update fields:
-
-montant_ht → total_ht
-
-montant_tva → tva_amount
-
-montant_ttc → total_ttc
-
-cout_energie → energy_cost
-
-montant_paye → payment_amount
-
-marge → marge (calculated)
-
-taux_marge → taux_marge (calculated)
-
-delai_paiement → delai_paiement (calculated)
-
-taux_recouvrement → taux_recouvrement (calculated)
-
-source_id → source_filename
-
-date_extraction → DATE(extraction_timestamp)
 
 
 

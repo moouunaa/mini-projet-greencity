@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>Main_ETL_Job</name>
+  <name>Job 1</name>
   <description/>
   <extended_description/>
   <job_version/>
   <directory>/</directory>
   <created_user>-</created_user>
-  <created_date>2025/12/28 22:38:17.948</created_date>
+  <created_date>2026/01/05 02:28:29.654</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2025/12/28 22:38:17.948</modified_date>
+  <modified_date>2026/01/05 02:28:29.654</modified_date>
   <parameters>
     </parameters>
   <slaveservers>
@@ -304,8 +304,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>16</xloc>
-      <yloc>176</yloc>
+      <xloc>32</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -316,8 +316,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1072</xloc>
-      <yloc>192</yloc>
+      <xloc>928</xloc>
+      <yloc>160</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -345,8 +345,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>208</xloc>
-      <yloc>176</yloc>
+      <xloc>32</xloc>
+      <yloc>160</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -384,8 +384,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>144</xloc>
-      <yloc>64</yloc>
+      <xloc>112</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -423,8 +423,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>288</xloc>
-      <yloc>64</yloc>
+      <xloc>256</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -462,8 +462,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>416</xloc>
-      <yloc>64</yloc>
+      <xloc>368</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -501,8 +501,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>496</xloc>
-      <yloc>192</yloc>
+      <xloc>384</xloc>
+      <yloc>160</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -540,8 +540,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>640</xloc>
-      <yloc>192</yloc>
+      <xloc>512</xloc>
+      <yloc>160</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -579,8 +579,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>784</xloc>
-      <yloc>192</yloc>
+      <xloc>624</xloc>
+      <yloc>160</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -594,7 +594,7 @@ echo Staging area cleaned successfully.</script>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
+      <exec_per_row>Y</exec_per_row>
       <clear_rows>N</clear_rows>
       <clear_files>N</clear_files>
       <set_logfile>N</set_logfile>
@@ -618,8 +618,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>64</yloc>
+      <xloc>624</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -633,7 +633,7 @@ echo Staging area cleaned successfully.</script>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
+      <exec_per_row>Y</exec_per_row>
       <clear_rows>N</clear_rows>
       <clear_files>N</clear_files>
       <set_logfile>N</set_logfile>
@@ -657,8 +657,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>64</yloc>
+      <xloc>768</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -672,7 +672,7 @@ echo Staging area cleaned successfully.</script>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
+      <exec_per_row>Y</exec_per_row>
       <clear_rows>N</clear_rows>
       <clear_files>N</clear_files>
       <set_logfile>N</set_logfile>
@@ -696,8 +696,8 @@ echo Staging area cleaned successfully.</script>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>992</xloc>
-      <yloc>64</yloc>
+      <xloc>912</xloc>
+      <yloc>32</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
