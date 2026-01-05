@@ -449,8 +449,36 @@
     <index_tablespace/>
     <attributes>
       <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
         <code>PORT_NUMBER</code>
         <attribute>3306</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
       </attribute>
     </attributes>
   </connection>
@@ -476,11 +504,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Database lookup - DIM_BATIMENT</from>
-      <to>Add sequence</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Add sequence</from>
       <to>Row normaliser</to>
       <enabled>Y</enabled>
@@ -491,17 +514,12 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Database lookup - DIM_ENVIRONNEMENT</from>
-      <to>Calculator 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>String operations</from>
       <to>Database lookup - DIM_TEMPS</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Calculator 2</from>
+      <from>calcul ecart reference</from>
       <to>Modified JavaScript value</to>
       <enabled>Y</enabled>
     </hop>
@@ -510,7 +528,131 @@
       <to>Insert / update</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Database lookup - DIM_ENVIRONNEMENT</from>
+      <to>calcul ecart reference</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup - DIM_BATIMENT</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Calcul Efficacité Énergétique</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Add constants</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Select values 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calcul Efficacité Énergétique</from>
+      <to>Select values 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Append streams</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 3</from>
+      <to>Append streams</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Append streams</from>
+      <to>Select values 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 4</from>
+      <to>Add sequence</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
+  <step>
+    <name>Add constants</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>efficacite_energetique</name>
+        <type>BigNumber</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>0.0</nullif>
+        <length>4</length>
+        <precision>3</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>672</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add sequence</name>
+    <type>Sequence</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <valuename>row_id</valuename>
+    <use_database>N</use_database>
+    <connection>greencity_dw</connection>
+    <schema/>
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name/>
+    <start_at>1</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>CSV file input</name>
     <type>CsvInput</type>
@@ -669,7 +811,536 @@
     </remotesteps>
     <GUI>
       <xloc>48</xloc>
-      <yloc>80</yloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calcul Efficacité Énergétique</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>efficacite_energetique</field_name>
+      <calc_type>DIVIDE</calc_type>
+      <field_a>emission_co2_kg</field_a>
+      <field_b>surface_batiment</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_BATIMENT</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_batiment</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>building_code</name>
+        <field>code_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+      <value>
+        <name>surface</name>
+        <rename>surface_batiment</rename>
+        <default/>
+        <type>None</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_ENVIRONNEMENT</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_environnement</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>typefield</name>
+        <field>type_indicateur</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_environnement</name>
+        <rename>id_environnement</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+      <value>
+        <name>seuil_optimal</name>
+        <rename>seuil_optimal</rename>
+        <default/>
+        <type>None</type>
+      </value>
+      <value>
+        <name>seuil_alerte</name>
+        <rename>seuil_alerte</rename>
+        <default/>
+        <type>None</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>736</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_REGION</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_region</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>region_code</name>
+        <field>code_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>288</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup - DIM_TEMPS</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>dim_temps</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>report_date</name>
+        <field>date_complete</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>192</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>1664</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Add constants</send_true_to>
+    <send_false_to>Calcul Efficacité Énergétique</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>surface_batiment</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Number</type>
+          <text>0.0</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask>####0.0#########;-####0.0#########</mask>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Insert / update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>greencity_dw</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>greencity_dw</schema>
+      <table>fait_environnement</table>
+      <key>
+        <name>id_temps</name>
+        <field>id_temps</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_region</name>
+        <field>id_region</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_batiment</name>
+        <field>id_batiment</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>id_environnement</name>
+        <field>id_environnement</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id_temps</name>
+        <rename>id_temps</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_region</name>
+        <rename>id_region</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_batiment</name>
+        <rename>id_batiment</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>id_environnement</name>
+        <rename>id_environnement</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>valeur_mesuree</name>
+        <rename>valeur_mesuree</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>valeur_reference</name>
+        <rename>seuil_optimal</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>ecart_reference</name>
+        <rename>ecart_reference</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>efficacite_energetique</name>
+        <rename>efficacite_energetique</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>categorie_performance</name>
+        <rename>categorie_performance</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>source_id</name>
+        <rename>source_filename</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>date_extraction</name>
+        <rename>extraction_timestamp</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>128</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Modified JavaScript value</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>// Calculer categorie_performance
+if (valeur_mesuree &lt;= seuil_optimal) {
+    categorie_performance = "Excellente";
+} else if (valeur_mesuree &lt;= seuil_alerte) {
+    categorie_performance = "Moyenne";
+} else {
+    categorie_performance = "À améliorer";
+}
+
+// Transmettre toutes les autres variables
+var fields = getInputRowMeta().getFieldNames();
+for (var i = 0; i &lt; fields.length; i++) {
+    var field = fields[i];
+    if (field != "categorie_performance") {
+        this[field] = this[field];
+    }
+}</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>categorie_performance</name>
+        <rename>categorie_performance</rename>
+        <type>String</type>
+        <length>20</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>320</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Row normaliser</name>
+    <type>Normaliser</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <typefield>typefield</typefield>
+    <fields>
+      <field>
+        <name>emission_co2_kg</name>
+        <value>CO2</value>
+        <norm>valeur_mesuree</norm>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <value>Recyclage</value>
+        <norm>valeur_mesuree</norm>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -764,8 +1435,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>160</xloc>
-      <yloc>80</yloc>
+      <xloc>48</xloc>
+      <yloc>96</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -843,315 +1514,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>288</xloc>
-      <yloc>80</yloc>
+      <xloc>48</xloc>
+      <yloc>176</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Database lookup - DIM_TEMPS</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>greencity_dw</connection>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>dim_temps</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <key>
-        <name>report_date</name>
-        <field>date_complete</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_temps</name>
-        <rename>id_temps</rename>
-        <default/>
-        <type>Integer</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>448</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Database lookup - DIM_REGION</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>greencity_dw</connection>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>dim_region</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <key>
-        <name>region_code</name>
-        <field>code_region</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_region</name>
-        <rename>id_region</rename>
-        <default/>
-        <type>Integer</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>672</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Database lookup - DIM_BATIMENT</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>greencity_dw</connection>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>dim_batiment</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <key>
-        <name>building_code</name>
-        <field>code_batiment</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_batiment</name>
-        <rename>id_batiment</rename>
-        <default/>
-        <type>Integer</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>960</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>1664</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Row normaliser</name>
-    <type>Normaliser</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <typefield>typefield</typefield>
-    <fields>
-      <field>
-        <name>emission_co2_kg</name>
-        <value>CO2</value>
-        <norm>valeur_mesuree</norm>
-      </field>
-      <field>
-        <name>recycling_rate_percent</name>
-        <value>Recyclage</value>
-        <norm>valeur_mesuree</norm>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>832</xloc>
-      <yloc>240</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Add sequence</name>
-    <type>Sequence</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <valuename>row_id</valuename>
-    <use_database>N</use_database>
-    <connection>greencity_dw</connection>
-    <schema/>
-    <seqname>SEQ_</seqname>
-    <use_counter>Y</use_counter>
-    <counter_name/>
-    <start_at>1</start_at>
-    <increment_by>1</increment_by>
-    <max_value>999999999</max_value>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>960</xloc>
-      <yloc>240</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Database lookup - DIM_ENVIRONNEMENT</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>greencity_dw</connection>
-    <cache>N</cache>
-    <cache_load_all>N</cache_load_all>
-    <cache_size>0</cache_size>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>dim_environnement</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <key>
-        <name>typefield</name>
-        <field>type_indicateur</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_environnement</name>
-        <rename>id_environnement</rename>
-        <default/>
-        <type>Integer</type>
-      </value>
-      <value>
-        <name>seuil_optimal</name>
-        <rename>seuil_optimal</rename>
-        <default/>
-        <type>None</type>
-      </value>
-      <value>
-        <name>seuil_alerte</name>
-        <rename>seuil_alerte</rename>
-        <default/>
-        <type>None</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>624</xloc>
-      <yloc>240</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Calculator 2</name>
+    <name>calcul ecart reference</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -1186,14 +1555,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
-      <yloc>240</yloc>
+      <xloc>512</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Modified JavaScript value</name>
-    <type>ScriptValueMod</type>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1202,40 +1571,72 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <compatible>N</compatible>
-    <optimizationLevel>9</optimizationLevel>
-    <jsScripts>
-      <jsScript>
-        <jsScript_type>0</jsScript_type>
-        <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>// Calculer categorie_performance
-if (valeur_mesuree &lt;= seuil_optimal) {
-    categorie_performance = "Excellente";
-} else if (valeur_mesuree &lt;= seuil_alerte) {
-    categorie_performance = "Moyenne";
-} else {
-    categorie_performance = "À améliorer";
-}
-
-// Transmettre toutes les autres variables
-var fields = getInputRowMeta().getFieldNames();
-for (var i = 0; i &lt; fields.length; i++) {
-    var field = fields[i];
-    if (field != "categorie_performance") {
-        this[field] = this[field];
-    }
-}</jsScript_script>
-      </jsScript>
-    </jsScripts>
     <fields>
       <field>
-        <name>categorie_performance</name>
-        <rename>categorie_performance</rename>
-        <type>String</type>
-        <length>20</length>
-        <precision>-1</precision>
-        <replace>N</replace>
+        <name>region_code</name>
+        <rename/>
       </field>
+      <field>
+        <name>report_date</name>
+        <rename/>
+      </field>
+      <field>
+        <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <rename/>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_type</name>
+        <rename/>
+      </field>
+      <field>
+        <name>created_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>updated_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_temps</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_region</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>surface_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>efficacite_energetique</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1246,14 +1647,14 @@ for (var i = 0; i &lt; fields.length; i++) {
       </output>
     </remotesteps>
     <GUI>
-      <xloc>288</xloc>
-      <yloc>240</yloc>
+      <xloc>768</xloc>
+      <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Insert / update</name>
-    <type>InsertUpdate</type>
+    <name>Select values 3</name>
+    <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1262,87 +1663,90 @@ for (var i = 0; i &lt; fields.length; i++) {
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>greencity_dw</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema>greencity_dw</schema>
-      <table>fait_environnement</table>
-      <key>
+    <fields>
+      <field>
+        <name>region_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>report_date</name>
+        <rename/>
+      </field>
+      <field>
+        <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <rename/>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_type</name>
+        <rename/>
+      </field>
+      <field>
+        <name>created_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>updated_at</name>
+        <rename/>
+      </field>
+      <field>
         <name>id_temps</name>
-        <field>id_temps</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
+        <rename/>
+      </field>
+      <field>
         <name>id_region</name>
-        <field>id_region</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
+        <rename/>
+      </field>
+      <field>
         <name>id_batiment</name>
-        <field>id_batiment</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>id_environnement</name>
-        <field>id_environnement</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>id_temps</name>
-        <rename>id_temps</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_region</name>
-        <rename>id_region</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_batiment</name>
-        <rename>id_batiment</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>id_environnement</name>
-        <rename>id_environnement</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>valeur_mesuree</name>
-        <rename>valeur_mesuree</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>valeur_reference</name>
-        <rename>seuil_optimal</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>ecart_reference</name>
-        <rename>ecart_reference</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>categorie_performance</name>
-        <rename>categorie_performance</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>source_id</name>
-        <rename>source_filename</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>date_extraction</name>
-        <rename>extraction_timestamp</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
+        <rename/>
+      </field>
+      <field>
+        <name>surface_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>efficacite_energetique</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>efficacite_energetique</name>
+        <rename>efficacite_energetique</rename>
+        <type>BigNumber</type>
+        <length>4</length>
+        <precision>3</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1352,8 +1756,127 @@ for (var i = 0; i &lt; fields.length; i++) {
       </output>
     </remotesteps>
     <GUI>
-      <xloc>96</xloc>
-      <yloc>240</yloc>
+      <xloc>704</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Append streams</name>
+    <type>Append</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <head_name>Select values 2</head_name>
+    <tail_name>Select values 3</tail_name>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 4</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>region_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>report_date</name>
+        <rename/>
+      </field>
+      <field>
+        <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+        <rename/>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+        <rename/>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>source_type</name>
+        <rename/>
+      </field>
+      <field>
+        <name>created_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>updated_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_temps</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_region</name>
+        <rename/>
+      </field>
+      <field>
+        <name>id_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>surface_batiment</name>
+        <rename/>
+      </field>
+      <field>
+        <name>efficacite_energetique</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
