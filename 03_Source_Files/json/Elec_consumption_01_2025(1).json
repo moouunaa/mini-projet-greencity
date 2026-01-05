@@ -1,0 +1,119 @@
+{
+  "id_region": "REG01",
+  "BATG01": {
+    "id_batiment": "BATG01",
+    "type_energie": "electricite",
+    "unite": "KWh",
+    "date_generation": "2025-01-14",
+    "mesures": [
+      {
+        "compteur_id": "ELEC_G01",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_kWh": -102.8
+      },
+      {
+        "compteur_id": "ELEC_G01",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_kWh": 90.2
+      },
+      {
+        "compteur_id": "ELEC_G01",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_kWh": 114.0
+      },
+      {
+        "compteur_id": "ELEC_G01",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_KWh": 129.5
+      },
+      {
+        "compteur_id": " ELEC_G02  ",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_kWh": 103.2
+      },
+      {
+        "compteur_id": "ELEC_G02",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_kWh": 123.3
+      },
+      {
+        "compteur_id": "ELEC_G02",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_KWh": 111.3
+      },
+      {
+        "compteur_id": "ELEC_G02",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_kWh": 116.0
+      },
+      {
+        "compteur_id": "ELEC_G02",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_kWh": 116.0
+      }
+    ]
+  },
+  "BAT101": {
+    "id_batiment": "BAT101",
+    "type_energie": "electricite",
+    "unite": "KWh",
+    "date_generation": "2025-01-14",
+    "mesures": [
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_kWh": 101.3
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_kWh": 95.8
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_kWh": 95.8
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_kWh": 111.4
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_kWh": 111.4
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_kWh": 112.4
+      },
+      {
+        "compteur_id": "ELEC_101",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_kWh": 112.4
+      },
+      {
+        "compteur_id": "ELEC_102",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_kWh": 100.7
+      },
+      {
+        "compteur_id": "ELEC_102",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_kWh": 102.5
+      },
+      {
+        "compteur_id": "ELEC_102",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_kWh": 114.6
+      },
+      {
+        "compteur_id": "ELEC_102",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_kWh": 127.1
+      }
+    ]
+  }
+}

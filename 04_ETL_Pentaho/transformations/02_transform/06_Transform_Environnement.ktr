@@ -472,11 +472,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>reorder2</from>
-      <to>Append streams</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Append streams</from>
       <to>trim</to>
       <enabled>Y</enabled>
@@ -489,11 +484,6 @@
     <hop>
       <from>Select values</from>
       <to>Select values 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values 2</from>
-      <to>Append streams 2</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -607,11 +597,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants 3</from>
-      <to>Calculator</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values 3</from>
       <to>Add constants 3 2</to>
       <enabled>Y</enabled>
@@ -644,6 +629,16 @@
     <hop>
       <from>Select values 13</from>
       <to>Text file output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>reorder2</from>
+      <to>Append streams</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Append streams 2</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -680,6 +675,18 @@
         <group>,</group>
         <nullif/>
         <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>client_code</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif/>
+        <length>6</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
       </field>
@@ -738,45 +745,6 @@
     </GUI>
   </step>
   <step>
-    <name>Add constants 3</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>constant</name>
-        <type>BigNumber</type>
-        <format>#.###</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>100</nullif>
-        <length>5</length>
-        <precision>3</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>627</xloc>
-      <yloc>428</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Add constants 3 2</name>
     <type>Constant</type>
     <description/>
@@ -812,6 +780,45 @@
     <GUI>
       <xloc>576</xloc>
       <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants 4</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>constant</name>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>100</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>944</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1145,6 +1152,17 @@
         <trim_type>none</trim_type>
       </field>
       <field>
+        <name>client_code</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>6</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
         <name>created_at</name>
         <type>String</type>
         <format/>
@@ -1204,47 +1222,6 @@
     </GUI>
   </step>
   <step>
-    <name>Calculator</name>
-    <type>Calculator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <failIfNoFile>Y</failIfNoFile>
-    <calculation>
-      <field_name>recycling_rate_percent</field_name>
-      <calc_type>MULTIPLY</calc_type>
-      <field_a>recycling_rate</field_a>
-      <field_b>constant</field_b>
-      <field_c/>
-      <value_type>None</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask/>
-      <decimal_symbol/>
-      <grouping_symbol/>
-      <currency_symbol/>
-    </calculation>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>723</xloc>
-      <yloc>428</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Calculator 2</name>
     <type>Calculator</type>
     <description/>
@@ -1282,6 +1259,47 @@
     <GUI>
       <xloc>480</xloc>
       <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Calculator 3</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>recycling_rate_percent</field_name>
+      <calc_type>MULTIPLY</calc_type>
+      <field_a>recycling_rate</field_a>
+      <field_b>constant</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>1072</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1520,6 +1538,22 @@
               <mask/>
             </value>
           </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>client_code</leftvalue>
+            <function>REGEXP</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>String</type>
+              <text>^CLI[0-9]{3}$</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask/>
+            </value>
+          </condition>
         </conditions>
       </condition>
     </compare>
@@ -1689,6 +1723,7 @@
         <jsScript_script>// Create NEW fields with cleaned values
 var region_clean;
 var building_clean;
+var client_clean;
 
 // Pour region_code
 if (region_code == null || !region_code.match(/^REG[0-9]{2}$/) || parseInt(region_code.substring(3)) > 12 || parseInt(region_code.substring(3)) == 0) {
@@ -1702,6 +1737,13 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     building_clean = "NON_RENSEIGNE";
 } else {
     building_clean = building_code;
+}
+
+// Pour client_code
+if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(client_code.substring(3)) > 999 || parseInt(client_code.substring(3)) == 0) {
+    client_clean = "NON_RENSEIGNE";
+} else {
+    client_clean = client_code;
 }</jsScript_script>
       </jsScript>
     </jsScripts>
@@ -1717,6 +1759,14 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <field>
         <name>building_clean</name>
         <rename>building_clean</rename>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>client_clean</name>
+        <rename>client_clean</rename>
         <type>String</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -1857,6 +1907,9 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </remove>
       <remove>
         <name>building_code</name>
+      </remove>
+      <remove>
+        <name>client_code</name>
       </remove>
     </fields>
     <attributes/>
@@ -2009,6 +2062,70 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     </GUI>
   </step>
   <step>
+    <name>Select values 13</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>region_code</name>
+      </field>
+      <field>
+        <name>report_date</name>
+      </field>
+      <field>
+        <name>building_code</name>
+      </field>
+      <field>
+        <name>client_code</name>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+      </field>
+      <field>
+        <name>recycling_rate_percent</name>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+      </field>
+      <field>
+        <name>source_filename</name>
+      </field>
+      <field>
+        <name>source_type</name>
+      </field>
+      <field>
+        <name>created_at</name>
+      </field>
+      <field>
+        <name>updated_at</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
+      <yloc>1200</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Select values 2</name>
     <type>SelectValues</type>
     <description/>
@@ -2030,6 +2147,10 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <field>
         <name>building_clean</name>
         <rename>building_code</rename>
+      </field>
+      <field>
+        <name>client_clean</name>
+        <rename>client_code</rename>
       </field>
       <field>
         <name>emission_co2_kg</name>
@@ -2125,7 +2246,7 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
+      <xloc>656</xloc>
       <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2174,6 +2295,9 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       </field>
       <field>
         <name>report_id</name>
+      </field>
+      <field>
+        <name>client_code</name>
       </field>
       <select_unspecified>N</select_unspecified>
       <remove>
@@ -2241,7 +2365,27 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <field>
         <name>updated_at</name>
       </field>
+      <field>
+        <name>client_code</name>
+      </field>
       <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
+        <type>String</type>
+        <length>6</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -2584,6 +2728,18 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
         <precision>-1</precision>
       </field>
       <field>
+        <name>client_code</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <length>6</length>
+        <precision>-1</precision>
+      </field>
+      <field>
         <name>emission_co2_kg</name>
         <type>BigNumber</type>
         <format>#.##</format>
@@ -2706,6 +2862,39 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <schema_name/>
     </partitioning>
     <fields>
+      <field>
+        <name>region_code</name>
+      </field>
+      <field>
+        <name>report_date</name>
+      </field>
+      <field>
+        <name>building_code</name>
+      </field>
+      <field>
+        <name>client_code</name>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+      </field>
+      <field>
+        <name>source_filename</name>
+      </field>
+      <field>
+        <name>source_type</name>
+      </field>
+      <field>
+        <name>created_at</name>
+      </field>
+      <field>
+        <name>updated_at</name>
+      </field>
       <select_unspecified>N</select_unspecified>
       <meta>
         <name>region_code</name>
@@ -2744,6 +2933,23 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <meta>
         <name>building_code</name>
         <rename>building_code</rename>
+        <type>None</type>
+        <length>6</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
         <type>None</type>
         <length>6</length>
         <precision>-2</precision>
@@ -2904,6 +3110,39 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <schema_name/>
     </partitioning>
     <fields>
+      <field>
+        <name>region_code</name>
+      </field>
+      <field>
+        <name>report_date</name>
+      </field>
+      <field>
+        <name>building_code</name>
+      </field>
+      <field>
+        <name>client_code</name>
+      </field>
+      <field>
+        <name>emission_co2_kg</name>
+      </field>
+      <field>
+        <name>recycling_rate</name>
+      </field>
+      <field>
+        <name>extraction_timestamp</name>
+      </field>
+      <field>
+        <name>source_filename</name>
+      </field>
+      <field>
+        <name>source_type</name>
+      </field>
+      <field>
+        <name>created_at</name>
+      </field>
+      <field>
+        <name>updated_at</name>
+      </field>
       <select_unspecified>N</select_unspecified>
       <meta>
         <name>region_code</name>
@@ -2942,6 +3181,23 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
       <meta>
         <name>building_code</name>
         <rename>building_code</rename>
+        <type>None</type>
+        <length>6</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
         <type>None</type>
         <length>6</length>
         <precision>-2</precision>
@@ -3142,6 +3398,19 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
         <remove_special_characters>none</remove_special_characters>
       </field>
       <field>
+        <in_stream_name>client_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper/>
+        <padding_type/>
+        <pad_char/>
+        <pad_len/>
+        <init_cap/>
+        <mask_xml/>
+        <digits/>
+        <remove_special_characters/>
+      </field>
+      <field>
         <in_stream_name>emission_co2_kg</in_stream_name>
         <out_stream_name/>
         <trim_type>both</trim_type>
@@ -3244,158 +3513,6 @@ if (building_code == null || !building_code.match(/^BAT[0-9]{3}$/) || parseInt(b
     <GUI>
       <xloc>560</xloc>
       <yloc>64</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Add constants 4</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>constant</name>
-        <type>Integer</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>100</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>944</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Calculator 3</name>
-    <type>Calculator</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <failIfNoFile>Y</failIfNoFile>
-    <calculation>
-      <field_name>recycling_rate_percent</field_name>
-      <calc_type>MULTIPLY</calc_type>
-      <field_a>recycling_rate</field_a>
-      <field_b>constant</field_b>
-      <field_c/>
-      <value_type>None</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask/>
-      <decimal_symbol/>
-      <grouping_symbol/>
-      <currency_symbol/>
-    </calculation>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>1072</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values 13</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>region_code</name>
-        <rename/>
-      </field>
-      <field>
-        <name>report_date</name>
-        <rename/>
-      </field>
-      <field>
-        <name>building_code</name>
-        <rename/>
-      </field>
-      <field>
-        <name>emission_co2_kg</name>
-        <rename/>
-      </field>
-      <field>
-        <name>recycling_rate</name>
-        <rename/>
-      </field>
-      <field>
-        <name>recycling_rate_percent</name>
-        <rename/>
-      </field>
-      <field>
-        <name>extraction_timestamp</name>
-        <rename/>
-      </field>
-      <field>
-        <name>source_filename</name>
-        <rename/>
-      </field>
-      <field>
-        <name>source_type</name>
-        <rename/>
-      </field>
-      <field>
-        <name>created_at</name>
-        <rename/>
-      </field>
-      <field>
-        <name>updated_at</name>
-        <rename/>
-      </field>
-      <select_unspecified>N</select_unspecified>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>1200</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

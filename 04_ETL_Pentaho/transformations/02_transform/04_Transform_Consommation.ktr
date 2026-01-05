@@ -462,11 +462,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>REORDER2</from>
-      <to>Append streams</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>add field</from>
       <to>REORDER2</to>
       <enabled>Y</enabled>
@@ -574,6 +569,11 @@
     <hop>
       <from>Append streams 3</from>
       <to>Text file output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>REORDER2</from>
+      <to>Append streams</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -690,6 +690,18 @@
         <group>,</group>
         <nullif/>
         <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>client_code</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif/>
+        <length>6</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
       </field>
@@ -1099,6 +1111,17 @@
         <trim_type>none</trim_type>
       </field>
       <field>
+        <name>client_code</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>6</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
         <name>created_at</name>
         <type>String</type>
         <format/>
@@ -1236,51 +1259,71 @@
     <fields>
       <field>
         <name>region_code</name>
+        <rename/>
       </field>
       <field>
         <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>client_code</name>
+        <rename/>
       </field>
       <field>
         <name>meter_type</name>
+        <rename/>
       </field>
       <field>
         <name>meter_code</name>
+        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
+        <rename/>
       </field>
       <field>
         <name>reading_date</name>
+        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
+        <rename/>
       </field>
       <field>
         <name>temperature</name>
+        <rename/>
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_name</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>date_generation</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -1555,6 +1598,23 @@
         <currency_symbol/>
         <storage_type>normal</storage_type>
       </meta>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
+        <type>None</type>
+        <length>6</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1584,51 +1644,71 @@
     <fields>
       <field>
         <name>region_code</name>
+        <rename/>
       </field>
       <field>
         <name>building_code</name>
+        <rename/>
+      </field>
+      <field>
+        <name>client_code</name>
+        <rename/>
       </field>
       <field>
         <name>meter_type</name>
+        <rename/>
       </field>
       <field>
         <name>meter_code</name>
+        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
+        <rename/>
       </field>
       <field>
         <name>reading_date</name>
+        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
+        <rename/>
       </field>
       <field>
         <name>temperature</name>
+        <rename/>
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_name</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>date_generation</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -1891,6 +1971,23 @@
         <rename>updated_at</rename>
         <type>None</type>
         <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
+        <type>None</type>
+        <length>6</length>
         <precision>-2</precision>
         <conversion_mask/>
         <date_format_lenient>false</date_format_lenient>
@@ -2625,51 +2722,71 @@
     <fields>
       <field>
         <name>reading_id</name>
+        <rename/>
       </field>
       <field>
         <name>reading_date</name>
+        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
+        <rename/>
       </field>
       <field>
         <name>temperature</name>
+        <rename/>
       </field>
       <field>
         <name>meter_code</name>
+        <rename/>
       </field>
       <field>
         <name>meter_type</name>
+        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
+        <rename/>
       </field>
       <field>
         <name>building_code</name>
+        <rename/>
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_code</name>
+        <rename/>
       </field>
       <field>
         <name>region_name</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
+      </field>
+      <field>
+        <name>client_code</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <remove>
@@ -2720,6 +2837,7 @@
       </field>
       <field>
         <name>date_generation</name>
+        <rename/>
       </field>
       <field>
         <name>compteur_id</name>
@@ -2735,29 +2853,58 @@
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>temperature</name>
+        <rename/>
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_name</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
+      </field>
+      <field>
+        <name>client_code</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>client_code</name>
+        <rename>client_code</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type>normal</storage_type>
+      </meta>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -2966,6 +3113,19 @@
         <mask_xml>None</mask_xml>
         <digits>none</digits>
         <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>client_code</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper/>
+        <padding_type/>
+        <pad_char/>
+        <pad_len/>
+        <init_cap/>
+        <mask_xml/>
+        <digits/>
+        <remove_special_characters/>
       </field>
     </fields>
     <attributes/>

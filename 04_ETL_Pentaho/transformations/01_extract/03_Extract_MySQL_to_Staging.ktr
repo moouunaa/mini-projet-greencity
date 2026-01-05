@@ -856,12 +856,14 @@
     b.building_name,
     r.region_code,
     r.region_name,
+    c.client_code,  
     mr.created_at,
     mr.updated_at
 FROM Meter_Readings mr
 JOIN Meters m ON mr.meter_id = m.meter_id
 JOIN Buildings b ON m.building_id = b.building_id
-JOIN Regions r ON b.region_id = r.region_id</sql>
+JOIN Regions r ON b.region_id = r.region_id
+JOIN Clients c ON b.client_id = c.client_id  </sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -1123,6 +1125,29 @@ JOIN Regions r ON b.region_id = r.region_id</sql>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>client_code</name>
+        <length>20</length>
+        <precision>-1</precision>
+        <origin>Table Input: Consommation SQL</origin>
+        <comments>client_code</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Paris</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
         <type>Date</type>
         <storagetype>normal</storagetype>
         <name>created_at</name>
@@ -1202,10 +1227,12 @@ JOIN Regions r ON b.region_id = r.region_id</sql>
     er.recycling_rate,
     r.region_code,
     b.building_code,
+    c.client_code,  
     er.created_at
 FROM Environmental_Reports er
 LEFT JOIN Regions r ON er.region_id = r.region_id
-LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
+LEFT JOIN Buildings b ON er.building_id = b.building_id
+LEFT JOIN Clients c ON b.client_id = c.client_id </sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -1219,7 +1246,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>report_id</name>
         <length>9</length>
         <precision>0</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>report_id</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1242,7 +1269,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>report_date</name>
         <length>-1</length>
         <precision>-1</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>report_date</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1265,7 +1292,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>emission_co2_kg</name>
         <length>10</length>
         <precision>2</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>emission_co2_kg</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1288,7 +1315,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>recycling_rate</name>
         <length>5</length>
         <precision>4</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>recycling_rate</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1311,7 +1338,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>region_code</name>
         <length>10</length>
         <precision>-1</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>region_code</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1334,8 +1361,31 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>building_code</name>
         <length>20</length>
         <precision>-1</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>building_code</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Paris</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>client_code</name>
+        <length>20</length>
+        <precision>-1</precision>
+        <origin>Table Input: Environnement SQL</origin>
+        <comments>client_code</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol>,</grouping_symbol>
@@ -1357,7 +1407,7 @@ LEFT JOIN Buildings b ON er.building_id = b.building_id</sql>
         <name>created_at</name>
         <length>0</length>
         <precision>-1</precision>
-        <origin>Table input 2 2</origin>
+        <origin>Table Input: Environnement SQL</origin>
         <comments>created_at</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>

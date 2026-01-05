@@ -1,0 +1,58 @@
+{
+  "id_region": "REG01",
+  "BATG01": {
+    "id_batiment": "BATG01",
+    "type_energie": "eau",
+    "unite": "m3",
+    "date_generation": "2025-01-14",
+    "mesures": [
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_m3": 9.8
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "14/01/2025 10:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_m3": 31.0
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-01-14T08:00:00",
+        "consommation_m3": 1.0
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-01-14T09:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-01-14T10:00:00",
+        "consommation_m3": 11.3
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-01-14T11:00:00",
+        "consommation_m3": -0.0
+      }
+    ]
+  },
+  "BAT101": {
+    "id_batiment": "BAT101",
+    "type_energie": "eau",
+    "unite": "m3",
+    "date_generation": "2025-01-14",
+    "mesures": []
+  }
+}
