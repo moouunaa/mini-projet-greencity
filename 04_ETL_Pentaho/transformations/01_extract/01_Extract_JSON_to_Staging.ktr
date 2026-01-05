@@ -657,23 +657,13 @@
     <includeNulls>N</includeNulls>
     <rownum_field/>
     <file>
-      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Eau_consumption_01_2025.json</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>N</file_required>
-      <include_subfolders>N</include_subfolders>
-      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Eau_consumption_02_2025.json</name>
-      <filemask/>
+      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\</name>
+      <filemask>Eau_consumption_.*\.json</filemask>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
       <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Gaz_consumption_01_2025.json</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>N</file_required>
-      <include_subfolders>N</include_subfolders>
-      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Gaz_consumption_02_2025.json</name>
-      <filemask/>
+      <filemask>Gaz_consumption_01_.*\.json</filemask>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
@@ -834,13 +824,8 @@
     <includeNulls>N</includeNulls>
     <rownum_field/>
     <file>
-      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Elec_consumption_01_2025.json</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>N</file_required>
-      <include_subfolders>N</include_subfolders>
-      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\Elec_consumption_02_2025.json</name>
-      <filemask/>
+      <name>C:\Users\hp\Desktop\mini projet - greencity\03_Source_Files\json\</name>
+      <filemask>Elec_consumption_.*\.json</filemask>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
