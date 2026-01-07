@@ -473,32 +473,32 @@
     </hop>
     <hop>
       <from>Append streams</from>
-      <to>Filter rows</to>
+      <to>Filter Null Key Values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows</from>
-      <to>trim</to>
+      <from>Filter Null Key Values</from>
+      <to>trim string fields</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>trim</from>
-      <to>Replace in string</to>
+      <from>trim string fields</from>
+      <to>Energy Types (EN→FR)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Replace in string</from>
-      <to>fixing date</to>
+      <from>Energy Types (EN→FR)</from>
+      <to>fixing date(remove T)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>fixing date</from>
+      <from>fixing date(remove T)</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>yyyy-MM-dd HH:mm:ss</from>
-      <to>Select values 2</to>
+      <to>Convert to yyyy-MM-dd Format</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -508,7 +508,7 @@
     </hop>
     <hop>
       <from> Format yyyy/MM/dd HH:mm:ss</from>
-      <to>Select values 4</to>
+      <to>Convert to yyyy/MM/dd Format</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -518,11 +518,11 @@
     </hop>
     <hop>
       <from>dd/MM/yyyy HH:mm</from>
-      <to>Replace in string 2</to>
+      <to>Extract Date from DateTime</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Replace in string 2</from>
+      <from>Extract Date from DateTime</from>
       <to>Select values 3</to>
       <enabled>Y</enabled>
     </hop>
@@ -537,7 +537,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 2</from>
+      <from>Convert to yyyy-MM-dd Format</from>
       <to>Append streams 2</to>
       <enabled>Y</enabled>
     </hop>
@@ -547,13 +547,18 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 4</from>
-      <to>Select values 6</to>
+      <from>Convert to yyyy/MM/dd Format</from>
+      <to>Convert to yyyy-MM-dd Format 2</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 6</from>
+      <from>Convert to yyyy-MM-dd Format 2</from>
       <to>Append streams 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Append streams 3</from>
+      <to>Write Transformed Consumption Data</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -562,18 +567,13 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 7</from>
-      <to>yyyy-MM-dd HH:mm:ss</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Append streams 3</from>
-      <to>Text file output</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>REORDER2</from>
       <to>Append streams</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 7</from>
+      <to>yyyy-MM-dd HH:mm:ss</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -588,7 +588,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Select values 4</send_true_to>
+    <send_true_to>Convert to yyyy/MM/dd Format</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -616,8 +616,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>224</yloc>
+      <xloc>672</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -716,7 +716,7 @@
     </remotesteps>
     <GUI>
       <xloc>176</xloc>
-      <yloc>48</yloc>
+      <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -742,8 +742,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
-      <yloc>96</yloc>
+      <xloc>416</xloc>
+      <yloc>64</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -758,7 +758,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <head_name>Select values 2</head_name>
+    <head_name>Convert to yyyy-MM-dd Format</head_name>
     <tail_name>Select values 5</tail_name>
     <attributes/>
     <cluster_schema/>
@@ -769,8 +769,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>912</xloc>
-      <yloc>656</yloc>
+      <xloc>992</xloc>
+      <yloc>768</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -786,7 +786,7 @@
       <schema_name/>
     </partitioning>
     <head_name>Append streams 2</head_name>
-    <tail_name>Select values 6</tail_name>
+    <tail_name>Convert to yyyy-MM-dd Format 2</tail_name>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -796,8 +796,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>656</yloc>
+      <xloc>672</xloc>
+      <yloc>768</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -959,7 +959,7 @@
     </remotesteps>
     <GUI>
       <xloc>64</xloc>
-      <yloc>48</yloc>
+      <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1187,12 +1187,186 @@
     </remotesteps>
     <GUI>
       <xloc>64</xloc>
-      <yloc>144</yloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Filter rows</name>
+    <name>Convert to yyyy-MM-dd Format</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>reading_date</name>
+        <rename>reading_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1072</xloc>
+      <yloc>624</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Convert to yyyy-MM-dd Format 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>reading_date</name>
+        <rename>reading_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>672</xloc>
+      <yloc>592</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Convert to yyyy/MM/dd Format</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>reading_date</name>
+        <rename>reading_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy/MM/dd</conversion_mask>
+        <date_format_lenient>true</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>672</xloc>
+      <yloc>448</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Extract Date from DateTime</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>reading_date</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^(\d{2}/\d{2}/\d{4}).*$</replace_string>
+        <replace_by_string>$1</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>432</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter Null Key Values</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -1202,7 +1376,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>trim</send_true_to>
+    <send_true_to>trim string fields</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
@@ -1241,7 +1415,7 @@
     </remotesteps>
     <GUI>
       <xloc>544</xloc>
-      <yloc>96</yloc>
+      <yloc>64</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1259,71 +1433,54 @@
     <fields>
       <field>
         <name>region_code</name>
-        <rename/>
       </field>
       <field>
         <name>building_code</name>
-        <rename/>
       </field>
       <field>
         <name>client_code</name>
-        <rename/>
       </field>
       <field>
         <name>meter_type</name>
-        <rename/>
       </field>
       <field>
         <name>meter_code</name>
-        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
-        <rename/>
       </field>
       <field>
         <name>reading_date</name>
-        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
-        <rename/>
       </field>
       <field>
         <name>temperature</name>
-        <rename/>
       </field>
       <field>
         <name>building_name</name>
-        <rename/>
       </field>
       <field>
         <name>region_name</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>date_generation</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -1625,8 +1782,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>48</yloc>
+      <xloc>336</xloc>
+      <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1644,71 +1801,54 @@
     <fields>
       <field>
         <name>region_code</name>
-        <rename/>
       </field>
       <field>
         <name>building_code</name>
-        <rename/>
       </field>
       <field>
         <name>client_code</name>
-        <rename/>
       </field>
       <field>
         <name>meter_type</name>
-        <rename/>
       </field>
       <field>
         <name>meter_code</name>
-        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
-        <rename/>
       </field>
       <field>
         <name>reading_date</name>
-        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
-        <rename/>
       </field>
       <field>
         <name>temperature</name>
-        <rename/>
       </field>
       <field>
         <name>building_name</name>
-        <rename/>
       </field>
       <field>
         <name>region_name</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>date_generation</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -2010,122 +2150,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>144</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Replace in string</name>
-    <type>ReplaceString</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>meter_type</in_stream_name>
-        <out_stream_name/>
-        <use_regex>no</use_regex>
-        <replace_string>electricity</replace_string>
-        <replace_by_string>electricite</replace_by_string>
-        <set_empty_string>N</set_empty_string>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-        <is_unicode>no</is_unicode>
-      </field>
-      <field>
-        <in_stream_name>meter_type</in_stream_name>
-        <out_stream_name/>
-        <use_regex>no</use_regex>
-        <replace_string>gas</replace_string>
-        <replace_by_string>gaz</replace_by_string>
-        <set_empty_string>N</set_empty_string>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-        <is_unicode>no</is_unicode>
-      </field>
-      <field>
-        <in_stream_name>meter_type</in_stream_name>
-        <out_stream_name/>
-        <use_regex>no</use_regex>
-        <replace_string>water</replace_string>
-        <replace_by_string>eau</replace_by_string>
-        <set_empty_string>N</set_empty_string>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-        <is_unicode>no</is_unicode>
-      </field>
-      <field>
-        <in_stream_name>meter_unit</in_stream_name>
-        <out_stream_name/>
-        <use_regex>no</use_regex>
-        <replace_string>KWh</replace_string>
-        <replace_by_string>kWh</replace_by_string>
-        <set_empty_string>N</set_empty_string>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-        <is_unicode>no</is_unicode>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>720</xloc>
-      <yloc>96</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Replace in string 2</name>
-    <type>ReplaceString</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>reading_date</in_stream_name>
-        <out_stream_name/>
-        <use_regex>yes</use_regex>
-        <replace_string>^(\d{2}/\d{2}/\d{4}).*$</replace_string>
-        <replace_by_string>$1</replace_by_string>
-        <set_empty_string>N</set_empty_string>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-        <is_unicode>no</is_unicode>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>832</xloc>
-      <yloc>320</yloc>
+      <xloc>336</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2220,53 +2246,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>896</xloc>
-      <yloc>96</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values 2</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>reading_date</name>
-        <rename>reading_date</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>true</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>992</xloc>
-      <yloc>528</yloc>
+      <xloc>1072</xloc>
+      <yloc>64</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2310,53 +2291,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
-      <yloc>416</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values 4</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>reading_date</name>
-        <rename>reading_date</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy/MM/dd</conversion_mask>
-        <date_format_lenient>true</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>624</xloc>
-      <yloc>368</yloc>
+      <xloc>912</xloc>
+      <yloc>528</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2400,53 +2336,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
-      <yloc>528</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values 6</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>reading_date</name>
-        <rename>reading_date</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>624</xloc>
-      <yloc>528</yloc>
+      <xloc>912</xloc>
+      <yloc>624</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2524,13 +2415,88 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
-      <yloc>96</yloc>
+      <xloc>1072</xloc>
+      <yloc>144</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Text file output</name>
+    <name>Energy Types (EN→FR)</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>meter_type</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string>electricity</replace_string>
+        <replace_by_string>electricite</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>meter_type</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string>gas</replace_string>
+        <replace_by_string>gaz</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>meter_type</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string>water</replace_string>
+        <replace_by_string>eau</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+      <field>
+        <in_stream_name>meter_unit</in_stream_name>
+        <out_stream_name/>
+        <use_regex>no</use_regex>
+        <replace_string>KWh</replace_string>
+        <replace_by_string>kWh</replace_by_string>
+        <set_empty_string>N</set_empty_string>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>816</xloc>
+      <yloc>64</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Write Transformed Consumption Data</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -2581,8 +2547,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>256</xloc>
-      <yloc>656</yloc>
+      <xloc>240</xloc>
+      <yloc>768</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2621,7 +2587,7 @@
     </remotesteps>
     <GUI>
       <xloc>256</xloc>
-      <yloc>144</yloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2636,7 +2602,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Replace in string 2</send_true_to>
+    <send_true_to>Extract Date from DateTime</send_true_to>
     <send_false_to> Format yyyy/MM/dd HH:mm:ss</send_false_to>
     <compare>
       <condition>
@@ -2664,13 +2630,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
-      <yloc>224</yloc>
+      <xloc>912</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>fixing date</name>
+    <name>fixing date(remove T)</name>
     <type>ReplaceString</type>
     <description/>
     <distribute>Y</distribute>
@@ -2703,8 +2669,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>96</yloc>
+      <xloc>960</xloc>
+      <yloc>64</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2722,71 +2688,54 @@
     <fields>
       <field>
         <name>reading_id</name>
-        <rename/>
       </field>
       <field>
         <name>reading_date</name>
-        <rename/>
       </field>
       <field>
         <name>consumption_value</name>
-        <rename/>
       </field>
       <field>
         <name>temperature</name>
-        <rename/>
       </field>
       <field>
         <name>meter_code</name>
-        <rename/>
       </field>
       <field>
         <name>meter_type</name>
-        <rename/>
       </field>
       <field>
         <name>meter_unit</name>
-        <rename/>
       </field>
       <field>
         <name>building_code</name>
-        <rename/>
       </field>
       <field>
         <name>building_name</name>
-        <rename/>
       </field>
       <field>
         <name>region_code</name>
-        <rename/>
       </field>
       <field>
         <name>region_name</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <field>
         <name>client_code</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <remove>
@@ -2803,7 +2752,7 @@
     </remotesteps>
     <GUI>
       <xloc>176</xloc>
-      <yloc>144</yloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2837,7 +2786,6 @@
       </field>
       <field>
         <name>date_generation</name>
-        <rename/>
       </field>
       <field>
         <name>compteur_id</name>
@@ -2853,39 +2801,30 @@
       </field>
       <field>
         <name>source_filename</name>
-        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
-        <rename/>
       </field>
       <field>
         <name>source_type</name>
-        <rename/>
       </field>
       <field>
         <name>temperature</name>
-        <rename/>
       </field>
       <field>
         <name>building_name</name>
-        <rename/>
       </field>
       <field>
         <name>region_name</name>
-        <rename/>
       </field>
       <field>
         <name>created_at</name>
-        <rename/>
       </field>
       <field>
         <name>updated_at</name>
-        <rename/>
       </field>
       <field>
         <name>client_code</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -2916,12 +2855,12 @@
     </remotesteps>
     <GUI>
       <xloc>256</xloc>
-      <yloc>48</yloc>
+      <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>trim</name>
+    <name>trim string fields</name>
     <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
@@ -3137,8 +3076,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>96</yloc>
+      <xloc>688</xloc>
+      <yloc>64</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -3153,7 +3092,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Select values 2</send_true_to>
+    <send_true_to>Convert to yyyy-MM-dd Format</send_true_to>
     <send_false_to>dd/MM/yyyy HH:mm</send_false_to>
     <compare>
       <condition>
@@ -3181,8 +3120,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
-      <yloc>224</yloc>
+      <xloc>1072</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

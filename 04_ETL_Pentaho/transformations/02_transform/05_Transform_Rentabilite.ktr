@@ -437,52 +437,47 @@
   </notepads>
   <order>
     <hop>
-      <from>Calculator_Unifier</from>
+      <from>Unify Clean Codes</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows 3</from>
-      <to>Append streams 2</to>
+      <from>Validate Codes (Regex)</from>
+      <to>Clean Invalid Codes</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows 3</from>
-      <to>Modified JavaScript value 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Modified JavaScript value 2</from>
-      <to>Calculator_Unifier</to>
+      <from>Clean Invalid Codes</from>
+      <to>Unify Clean Codes</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>trim</from>
-      <to>Filter rows 3</to>
+      <to>Validate Codes (Regex)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Select values</from>
-      <to>Select values 3</to>
+      <to>Rename Cleaned Codes</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 3</from>
-      <to>Append streams 2</to>
+      <from>Rename Cleaned Codes</from>
+      <to>Merge Valid &amp; Cleaned</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>CSV file input</from>
-      <to>Select values 2 2</to>
+      <to>Select All Fields</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 2 2</from>
-      <to>Replace in string</to>
+      <from>Select All Fields</from>
+      <to>Payment Method EN→FR</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Replace in string</from>
+      <from>Payment Method EN→FR</from>
       <to>If field value is null</to>
       <enabled>Y</enabled>
     </hop>
@@ -492,43 +487,48 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Append streams 2</from>
+      <from>Merge Valid &amp; Cleaned</from>
       <to>Fix Date Format with REGEXP</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Fix Date Format with REGEXP</from>
-      <to>Replace in string 2</to>
+      <to>Extract Date Part</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Replace in string 2</from>
-      <to>Select values 2</to>
+      <from>Extract Date Part</from>
+      <to>To Date (yyyy/MM/dd)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 2</from>
-      <to>Select values 4</to>
+      <from>To Date (yyyy/MM/dd)</from>
+      <to>To Date (yyyy-MM-dd)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 4</from>
-      <to>String operations</to>
+      <from>To Date (yyyy-MM-dd)</from>
+      <to>final trim</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>String operations</from>
-      <to>Select values 5</to>
+      <from>final trim</from>
+      <to>To String (yyyy-MM-dd)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 5</from>
-      <to>Text file output</to>
+      <from>To String (yyyy-MM-dd)</from>
+      <to>Write Transformed Data</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Validate Codes (Regex)</from>
+      <to>Merge Valid &amp; Cleaned</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Append streams 2</name>
+    <name>Merge Valid &amp; Cleaned</name>
     <type>Append</type>
     <description/>
     <distribute>Y</distribute>
@@ -538,8 +538,8 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <head_name>Filter rows 3</head_name>
-    <tail_name>Select values 3</tail_name>
+    <head_name>Validate Codes (Regex)</head_name>
+    <tail_name>Rename Cleaned Codes</tail_name>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -849,7 +849,7 @@
     </GUI>
   </step>
   <step>
-    <name>Calculator_Unifier</name>
+    <name>Unify Clean Codes</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -920,7 +920,7 @@
     </GUI>
   </step>
   <step>
-    <name>Filter rows 3</name>
+    <name>Validate Codes (Regex)</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -930,8 +930,8 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Append streams 2</send_true_to>
-    <send_false_to>Modified JavaScript value 2</send_false_to>
+    <send_true_to>Merge Valid &amp; Cleaned</send_true_to>
+    <send_false_to>Clean Invalid Codes</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
@@ -1134,13 +1134,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>384</xloc>
+      <xloc>416</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Modified JavaScript value 2</name>
+    <name>Clean Invalid Codes</name>
     <type>ScriptValueMod</type>
     <description/>
     <distribute>Y</distribute>
@@ -1224,7 +1224,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     </GUI>
   </step>
   <step>
-    <name>Replace in string</name>
+    <name>Payment Method EN→FR</name>
     <type>ReplaceString</type>
     <description/>
     <distribute>Y</distribute>
@@ -1281,13 +1281,13 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>256</xloc>
+      <xloc>272</xloc>
       <yloc>32</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Replace in string 2</name>
+    <name>Extract Date Part</name>
     <type>ReplaceString</type>
     <description/>
     <distribute>Y</distribute>
@@ -1380,7 +1380,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>480</xloc>
+      <xloc>496</xloc>
       <yloc>144</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1432,7 +1432,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     </GUI>
   </step>
   <step>
-    <name>Select values 2</name>
+    <name>To Date (yyyy/MM/dd)</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1556,13 +1556,13 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
+      <xloc>352</xloc>
       <yloc>144</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Select values 2 2</name>
+    <name>Select All Fields</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1575,72 +1575,95 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     <fields>
       <field>
         <name>invoice_id</name>
+        <rename/>
       </field>
       <field>
         <name>invoice_number</name>
+        <rename/>
       </field>
       <field>
         <name>invoice_date</name>
+        <rename/>
       </field>
       <field>
         <name>due_date</name>
+        <rename/>
       </field>
       <field>
         <name>total_ht</name>
+        <rename/>
       </field>
       <field>
         <name>tva_amount</name>
+        <rename/>
       </field>
       <field>
         <name>total_ttc</name>
+        <rename/>
       </field>
       <field>
         <name>energy_cost</name>
+        <rename/>
       </field>
       <field>
         <name>status</name>
+        <rename/>
       </field>
       <field>
         <name>client_code</name>
+        <rename/>
       </field>
       <field>
         <name>client_name</name>
+        <rename/>
       </field>
       <field>
         <name>sector</name>
+        <rename/>
       </field>
       <field>
         <name>building_code</name>
+        <rename/>
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_code</name>
+        <rename/>
       </field>
       <field>
         <name>payment_date</name>
+        <rename/>
       </field>
       <field>
         <name>payment_amount</name>
+        <rename/>
       </field>
       <field>
         <name>payment_method</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1659,7 +1682,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     </GUI>
   </step>
   <step>
-    <name>Select values 3</name>
+    <name>Rename Cleaned Codes</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1672,30 +1695,39 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     <fields>
       <field>
         <name>invoice_id</name>
+        <rename/>
       </field>
       <field>
         <name>invoice_number</name>
+        <rename/>
       </field>
       <field>
         <name>invoice_date</name>
+        <rename/>
       </field>
       <field>
         <name>due_date</name>
+        <rename/>
       </field>
       <field>
         <name>total_ht</name>
+        <rename/>
       </field>
       <field>
         <name>tva_amount</name>
+        <rename/>
       </field>
       <field>
         <name>total_ttc</name>
+        <rename/>
       </field>
       <field>
         <name>energy_cost</name>
+        <rename/>
       </field>
       <field>
         <name>status</name>
+        <rename/>
       </field>
       <field>
         <name>client_code1</name>
@@ -1703,9 +1735,11 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </field>
       <field>
         <name>client_name</name>
+        <rename/>
       </field>
       <field>
         <name>sector</name>
+        <rename/>
       </field>
       <field>
         <name>building_code1</name>
@@ -1713,6 +1747,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </field>
       <field>
         <name>building_name</name>
+        <rename/>
       </field>
       <field>
         <name>region_code1</name>
@@ -1720,27 +1755,35 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </field>
       <field>
         <name>payment_date</name>
+        <rename/>
       </field>
       <field>
         <name>payment_amount</name>
+        <rename/>
       </field>
       <field>
         <name>payment_method</name>
+        <rename/>
       </field>
       <field>
         <name>created_at</name>
+        <rename/>
       </field>
       <field>
         <name>updated_at</name>
+        <rename/>
       </field>
       <field>
         <name>extraction_timestamp</name>
+        <rename/>
       </field>
       <field>
         <name>source_type</name>
+        <rename/>
       </field>
       <field>
         <name>source_filename</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1759,7 +1802,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     </GUI>
   </step>
   <step>
-    <name>Select values 4</name>
+    <name>To Date (yyyy-MM-dd)</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1889,7 +1932,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
     </GUI>
   </step>
   <step>
-    <name>Select values 5</name>
+    <name>To String (yyyy-MM-dd)</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -2013,13 +2056,13 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
+      <xloc>64</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>String operations</name>
+    <name>final trim</name>
     <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
@@ -2183,13 +2226,13 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
+      <xloc>64</xloc>
       <yloc>144</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Text file output</name>
+    <name>Write Transformed Data</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -2240,7 +2283,7 @@ if (client_code == null || !client_code.match(/^CLI[0-9]{3}$/) || parseInt(clien
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
+      <xloc>64</xloc>
       <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>

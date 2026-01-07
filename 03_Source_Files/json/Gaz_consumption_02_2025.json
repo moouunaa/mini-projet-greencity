@@ -1,33 +1,58 @@
 {
   "id_region": "REG01",
-  "batiments": [
-    {
-      "id_batiment": "BAT002",
-      "type_energie": "gaz",
-      "unite": "m3",
-      "date_generation": "2025-02-15",
-      "mesures": [
-        {
-          "compteur_id": "GAZ_001",
-          "date_mesure": "2025-02-15T08:00:00",
-          "consommation_m3": 3.6
-        },
-        {
-          "compteur_id": "GAZ_001",
-          "date_mesure": "2025-02-15T09:00:00",
-          "consommation_m3": 3.72
-        },
-        {
-          "compteur_id": "GAZ_002",
-          "date_mesure": "2025-02-15T08:00:00",
-          "consommation_m3": 4.4
-        },
-        {
-          "compteur_id": "GAZ_002",
-          "date_mesure": "15/02/2025 09:00",
-          "consommation_m3": 5.1
-        }
-      ]
-    }
-  ]
+  "BATG01": {
+    "id_batiment": "BATG01",
+    "type_energie": "gaz",
+    "unite": "m3",
+    "date_generation": "2025-02-14",
+    "mesures": [
+      {
+        "compteur_id": "GAZ_001",
+        "date_mesure": "2025-02-14T08:00:00",
+        "consommation_m3": 32.0
+      },
+      {
+        "compteur_id": "GAZ_001",
+        "date_mesure": "2025-02-14T09:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "GAZ_001",
+        "date_mesure": "2025-02-14T10:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "GAZ_001",
+        "date_mesure": "2025-02-14T11:00:00",
+        "consommation_m3": 12.6
+      },
+      {
+        "compteur_id": "GAZ_002",
+        "date_mesure": "2025-02-14T08:00:00",
+        "consommation_m3": 3.4
+      },
+      {
+        "compteur_id": "GAZ_002",
+        "date_mesure": "2025-02-14T09:00:00",
+        "consommation_m3": 18.1
+      },
+      {
+        "compteur_id": "GAZ_002",
+        "date_mesure": "2025-02-14T10:00:00",
+        "consommation_m3": null
+      },
+      {
+        "compteur_id": "GAZ_002",
+        "date_mesure": "2025-02-14T11:00:00",
+        "consommation_m3": 19.1
+      }
+    ]
+  },
+  "BAT101": {
+    "id_batiment": "BAT101",
+    "type_energie": "gaz",
+    "unite": "m3",
+    "date_generation": "2025-02-14",
+    "mesures": []
+  }
 }

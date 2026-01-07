@@ -15,4 +15,20 @@ echo    GreenCity ETL Process - Completed
 echo    Date: %date% Time: %time%
 echo ============================================
 
-pause
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 # FONCTIONS DE GÉNÉRATION AVEC ERREURS
 # =====================================================
 
-def generate_json_with_errors(energy_type, filename, unit, field_name):
+def generate_json_with_errors(energy_type, filename, unit, field_name, month=1):
     """
-    Génère un fichier JSON avec des erreurs volontaires
+    Génère un fichier JSON (avec erreurs volontaires) pour le mois donné (1 ou 2)
     """
     
     # Structure de base
@@ -18,20 +18,20 @@ def generate_json_with_errors(energy_type, filename, unit, field_name):
             "id_batiment": "BATG01",
             "type_energie": energy_type,
             "unite": unit,
-            "date_generation": "2025-01-14",
+            "date_generation": f"2025-{month:02d}-14",
             "mesures": []
         },
         "BAT101": {
             "id_batiment": "BAT101",
             "type_energie": energy_type,
             "unite": unit,
-            "date_generation": "2025-01-14",
+            "date_generation": f"2025-{month:02d}-14",
             "mesures": []
         }
     }
     
-    # Dates de base pour janvier 2025
-    base_date = datetime(2025, 1, 14)
+    # Dates de base (14th of the requested month)
+    base_date = datetime(2025, month, 14) 
     
     # Générer des mesures pour chaque compteur
     if energy_type == "electricite":
@@ -119,43 +119,50 @@ def generate_json_with_errors(energy_type, filename, unit, field_name):
             building_data["mesures"].append(incomplete_measure)
     
     # Écrire le fichier JSON
-    with open(filename, 'w', encoding='utf-8') as f:
+    json_filename = f"C:/Users/hp/Desktop/mini projet - greencity/03_Source_Files/json/{filename}"
+    with open(json_filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     
-    print(f" {filename} généré avec {sum(len(b['mesures']) for k, b in data.items() if k != 'id_region')} mesures (dont erreurs)")
-
+        print(f" {json_filename} généré avec {sum(len(b['mesures']) for k, b in data.items() if k != 'id_region')} mesures (dont erreurs)")
+        
 # =====================================================
 # GÉNÉRATION DES 3 FICHIERS JSON
 # =====================================================
 
 def generate_all_json_files():
     print("=" * 50)
-    print("GÉNÉRATION DES FICHIERS JSON AVEC ERREURS")
+    print("GÉNÉRATION DES FICHIERS JSON AVEC ERREURS (MOIS 01 & 02)")
     print("=" * 50)
     
-    # 1. Électricité (avec variations d'unité)
-    generate_json_with_errors(
-        energy_type="electricite",
-        filename="Elec_consumption_01_2025.json",
-        unit="KWh",  # Majuscule volontaire
-        field_name="consommation_kWh"
-    )
-    
-    # 2. Eau
-    generate_json_with_errors(
-        energy_type="eau",
-        filename="Eau_consumption_01_2025.json",
-        unit="m3",
-        field_name="consommation_m3"
-    )
-    
-    # 3. Gaz
-    generate_json_with_errors(
-        energy_type="gaz",
-        filename="Gaz_consumption_01_2025.json",
-        unit="m3",
-        field_name="consommation_m3"
-    )
+    for month in (1, 2):
+        suffix = f"{month:02d}_2025"
+
+        # Électricité
+        generate_json_with_errors(
+            energy_type="electricite",
+            filename=f"Elec_consumption_{suffix}.json",
+            unit="KWh",
+            field_name="consommation_kWh",
+            month=month
+        )
+
+        # Eau
+        generate_json_with_errors(
+            energy_type="eau",
+            filename=f"Eau_consumption_{suffix}.json",
+            unit="m3",
+            field_name="consommation_m3",
+            month=month
+        )
+
+        # Gaz
+        generate_json_with_errors(
+            energy_type="gaz",
+            filename=f"Gaz_consumption_{suffix}.json",
+            unit="m3",
+            field_name="consommation_m3",
+            month=month
+        )
     
     print("\n" + "=" * 50)
     print("TYPES D'ERREURS INCLUS DANS LES FICHIERS :")
@@ -173,14 +180,14 @@ def generate_all_json_files():
 # GÉNÉRATION FICHIER CSV ENVIRONNEMENTAL
 # =====================================================
 
-def generate_env_csv_with_errors():
-    """Génère le fichier CSV environnemental avec erreurs"""
+def generate_env_csv_with_errors(month=1):
+    """Génère le fichier CSV environnemental avec erreurs pour le mois demandé (1..3)"""
     
     print("\n" + "=" * 50)
-    print("GÉNÉRATION DU FICHIER CSV ENVIRONNEMENTAL")
+    print(f"GÉNÉRATION DU FICHIER CSV ENVIRONNEMENTAL (MOIS {month:02d})")
     print("=" * 50)
     
-    # Données de base
+    # Données de base (dates will be set according to the requested month)
     base_data = [
         {"id_region": "REG01", "id_batiment": "BAT001", "date_rapport": "2025-01-31", "emission_CO2_kg": 512, "taux_recyclage": 0.67},
         {"id_region": "REG01", "id_batiment": "BAT002", "date_rapport": "2025-01-31", "emission_CO2_kg": 430, "taux_recyclage": 0.71},
@@ -189,6 +196,14 @@ def generate_env_csv_with_errors():
         {"id_region": "REG04", "id_batiment": "BAT013", "date_rapport": "2025-01-31", "emission_CO2_kg": 490, "taux_recyclage": 0.73},
         {"id_region": "REG05", "id_batiment": "BAT014", "date_rapport": "2025-01-31", "emission_CO2_kg": 410, "taux_recyclage": 0.69},
     ]
+
+    # Map month to a reasonable last-day date string for the report
+    month_days = {1: "2025-01-31", 2: "2025-02-28", 3: "2025-03-31"}
+    date_report = month_days.get(month, f"2025-{month:02d}-28")
+
+    # Update the date_rapport for all base rows
+    for r in base_data:
+        r["date_rapport"] = date_report
     
     # Ajouter des erreurs
     data_with_errors = []
@@ -213,7 +228,7 @@ def generate_env_csv_with_errors():
             
             elif error_type == "date_bad":
                 # Date mal formatée
-                error_row["date_rapport"] = "31/01/2025"
+                error_row["date_rapport"] = date_report.replace("-", "/")
             
             elif error_type == "space":
                 # Espaces inutiles
@@ -236,22 +251,23 @@ def generate_env_csv_with_errors():
     
     #  AJOUTER DES LIGNES PROBLÉMATIQUES SUPPLÉMENTAIRES
     problematic_rows = [
-        {"id_region": "REG01", "id_batiment": "BAT999", "date_rapport": "2025-01-31", "emission_CO2_kg": 300, "taux_recyclage": 0.60},  # Bâtiment inexistant
-        {"id_region": "REG99", "id_batiment": "BAT001", "date_rapport": "2025-01-31", "emission_CO2_kg": 250, "taux_recyclage": 0.55},  # Région inexistante
-        {"id_region": "", "id_batiment": "BAT002", "date_rapport": "2025-01-31", "emission_CO2_kg": 480, "taux_recyclage": 0.70},  # Région vide
-        {"id_region": "REG01", "id_batiment": "", "date_rapport": "2025-01-31", "emission_CO2_kg": 520, "taux_recyclage": 0.68},  # Bâtiment vide
+        {"id_region": "REG01", "id_batiment": "BAT999", "date_rapport": date_report, "emission_CO2_kg": 300, "taux_recyclage": 0.60},  # Bâtiment inexistant
+        {"id_region": "REG99", "id_batiment": "BAT001", "date_rapport": date_report, "emission_CO2_kg": 250, "taux_recyclage": 0.55},  # Région inexistante
+        {"id_region": "", "id_batiment": "BAT002", "date_rapport": date_report, "emission_CO2_kg": 480, "taux_recyclage": 0.70},  # Région vide
+        {"id_region": "REG01", "id_batiment": "", "date_rapport": date_report, "emission_CO2_kg": 520, "taux_recyclage": 0.68},  # Bâtiment vide
     ]
     
     data_with_errors.extend(problematic_rows)
     
     # Écrire le fichier CSV
     import csv
-    with open('env_reports_01_2025.csv', 'w', newline='', encoding='utf-8') as f:
+    out_path = f'C:/Users/hp/Desktop/mini projet - greencity/03_Source_Files/csv/env_reports_{month:02d}_2025.csv'
+    with open(out_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=base_data[0].keys())
         writer.writeheader()
         writer.writerows(data_with_errors)
     
-    print(f" env_reports_01_2025.csv généré avec {len(data_with_errors)} lignes (dont erreurs)")
+    print(f" {out_path} généré avec {len(data_with_errors)} lignes (dont erreurs)")
     print("\nTypes d'erreurs inclus :")
     print("- Valeurs manquantes (champs vides)")
     print("- Dates mal formatées (JJ/MM/AAAA)")
@@ -262,39 +278,7 @@ def generate_env_csv_with_errors():
     print("- Mauvais types de données")
     print("- Références à des régions/bâtiments inexistants")
 
-# =====================================================
-# GÉNÉRATION FICHIER EXEMPLE PARFAIT (pour comparaison)
-# =====================================================
-
-def generate_perfect_example():
-    """Génère un fichier exemple sans erreurs pour montrer le format attendu"""
-    
-    perfect_data = {
-        "id_region": "REG01",
-        "BATG01": {
-            "id_batiment": "BATG01",
-            "type_energie": "electricite",
-            "unite": "kWh",
-            "date_generation": "2025-01-14",
-            "mesures": [
-                {
-                    "compteur_id": "ELEC_G01",
-                    "date_mesure": "2025-01-14T08:00:00",
-                    "consommation_kWh": 120.5
-                },
-                {
-                    "compteur_id": "ELEC_G01",
-                    "date_mesure": "2025-01-14T09:00:00",
-                    "consommation_kWh": 123.2
-                }
-            ]
-        }
-    }
-    
-    with open('perfect_example.json', 'w', encoding='utf-8') as f:
-        json.dump(perfect_data, f, indent=2, ensure_ascii=False)
-    
-    print("\n perfect_example.json généré (format correct sans erreurs)")
+# Perfect example generator removed — script now generates only dirty data (requested JSON & CSV files).
 
 # =====================================================
 # EXÉCUTION PRINCIPALE
@@ -307,21 +291,25 @@ if __name__ == "__main__":
     print("       pour tester la phase de Transformation ETL.")
     print("=" * 60)
     
-    # 1. Générer les fichiers JSON IoT
+    # 1. Générer les fichiers JSON IoT (mois 01 & 02)
     generate_all_json_files()
     
-    # 2. Générer le fichier CSV environnemental
-    generate_env_csv_with_errors()
-    
-    # 3. Générer un exemple parfait (optionnel)
-    generate_perfect_example()
+    # 2. Générer les fichiers CSV environnementaux (mois 01-03)
+    for m in (1, 2, 3):
+        generate_env_csv_with_errors(month=m)
     
     print("\n" + "=" * 60)
-    print(" FICHIERS GÉNÉRÉS AVEC SUCCÈS")
+    print(" FICHIERS GÉNÉRÉS AVEC SUCCÈS (DIRTY DATA ONLY)")
     print("=" * 60)
-    print("1. Elec_consumption_01_2025.json")
-    print("2. Eau_consumption_01_2025.json") 
-    print("3. Gaz_consumption_01_2025.json")
-    print("4. env_reports_01_2025.csv")
-    print("5. perfect_example.json (référence)")
-    print("\n  Les fichiers 1-4 contiennent des erreurs à corriger en ETL")
+    print("JSON:")
+    print(" - Elec_consumption_01_2025.json")
+    print(" - Elec_consumption_02_2025.json")
+    print(" - Eau_consumption_01_2025.json")
+    print(" - Eau_consumption_02_2025.json")
+    print(" - Gaz_consumption_01_2025.json")
+    print(" - Gaz_consumption_02_2025.json")
+    print("CSV:")
+    print(" - env_reports_01_2025.csv")
+    print(" - env_reports_02_2025.csv")
+    print(" - env_reports_03_2025.csv")
+    print("\n  Les fichiers ci-dessus contiennent des erreurs à corriger en ETL")

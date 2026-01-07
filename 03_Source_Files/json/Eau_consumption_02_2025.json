@@ -1,33 +1,58 @@
 {
   "id_region": "REG01",
-  "batiments": [
-    {
-      "id_batiment": "BAT001",
-      "type_energie": "eau",
-      "unite": "m3",
-      "date_generation": "2025-02-15",
-      "mesures": [
-        {
-          "compteur_id": "EAU_001",
-          "date_mesure": "2025-02-15T08:00:00",
-          "consommation_m3": 1.6
-        },
-        {
-          "compteur_id": "EAU_001",
-          "date_mesure": "2025-02-15T09:00:00",
-          "consommation_m3": 1.71
-        },
-        {
-          "compteur_id": "EAU_002",
-          "date_mesure": "2025-02-15T08:00:00",
-          "consommation_m3": 2.2
-        },
-        {
-          "compteur_id": "EAU_002",
-          "date_mesure": "15/02/2025 09:00",
-          "consommation_m3": 2.3
-        }
-      ]
-    }
-  ]
+  "BATG01": {
+    "id_batiment": "BATG01",
+    "type_energie": "eau",
+    "unite": "m3",
+    "date_generation": "2025-02-14",
+    "mesures": [
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-02-14T08:00:00",
+        "consommation_m3": 25.8
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-02-14T09:00:00",
+        "consommation_m3": 6.1
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-02-14T10:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_001",
+        "date_mesure": "2025-02-14T11:00:00",
+        "consommation_m3": null
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-02-14T08:00:00",
+        "consommation_m3": 26.7
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "14/02/2025 09:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-02-14T10:00:00",
+        "consommation_m3": 0.0
+      },
+      {
+        "compteur_id": "EAU_002",
+        "date_mesure": "2025-02-14T11:00:00",
+        "consommation_m3": 16.1
+      }
+    ]
+  },
+  "BAT101": {
+    "id_batiment": "BAT101",
+    "type_energie": "eau",
+    "unite": "m3",
+    "date_generation": "2025-02-14",
+    "mesures": []
+  }
 }

@@ -4,7 +4,7 @@ echo    Scheduled ETL - GreenCity
 echo    Lance par Task Scheduler a %date% %time%
 echo ============================================
 
-REM Se positionner dans le dossier du projet
+
 cd /d "C:\Users\hp\Desktop\mini projet - greencity"
 
 REM Appeler le batch principal
@@ -14,3 +14,20 @@ echo ============================================
 echo    Scheduled ETL - Termine
 echo    Date: %date% Time: %time%
 echo ============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
